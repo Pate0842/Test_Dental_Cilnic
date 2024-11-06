@@ -10,7 +10,7 @@ const Home = () => {
         title={
           "Chào mừng đến với Bệnh viện Nha khoa Happy Teeth | Nơi mang đến nụ cười khỏe đẹp và dịch vụ chăm sóc răng miệng đáng tin cậy dành cho bạn."
         }
-        imageUrl={"/public/hero.png"}
+        imageUrl={"/hero.png"}//Xin chào
       />
       <Biography imageUrl={"/dentist.png"} />
       <Departments />
