@@ -47,19 +47,22 @@ const Navbar = () => {
               Tiểu sử
             </Link>
           </div>
-          {isAuthenticated ? (
+          {isAuthenticated && user ? (
             <div className="user-info" 
-                 onMouseEnter={() => setDropdownOpen(true)} 
-                 onMouseLeave={() => setDropdownOpen(false)}
+              onMouseEnter={() => setDropdownOpen(true)} 
+              onMouseLeave={() => setDropdownOpen(false)}
             >
               <span className="user-name">{`${user.firstName} ${user.lastName}`}</span>
               {dropdownOpen && (
                 <div className="dropdown">
                   <Link to="/appointmentstatus" onClick={() => setShow(!show)}>
-                  Trạng thái lịch hẹn
+                    Trạng thái lịch hẹn
                   </Link>
                   <Link to="/profile" onClick={() => setShow(!show)}>
-                  Thông tin cá nhân
+                    Thông tin cá nhân
+                  </Link>
+                  <Link to="/profile" onClick={() => setShow(!show)}>
+                    Lịch sử khám bệnh
                   </Link>
                   <button className="logoutBtn btn" onClick={handleLogout}>
                     Đăng xuất

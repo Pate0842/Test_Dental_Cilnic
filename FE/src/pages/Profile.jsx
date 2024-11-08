@@ -1,176 +1,172 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { Context } from "../main";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const { user, setUser } = useContext(Context);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+  const [profileData, setProfileData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-    nic: "",  // Display the current NIC but make it read-only
+    nic: "",
     dob: "",
     gender: "",
   });
 
-  // Cập nhật formData mỗi khi user thay đổi
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    return new Date(dateString).toISOString().split("T")[0];
+  };
+
   useEffect(() => {
     if (user) {
-      setFormData({
+      setProfileData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         email: user.email || "",
         phone: user.phone || "",
         nic: user.nic || "",
-        dob: user.dob ? new Date(user.dob).toISOString().split("T")[0] : "",
+        dob: formatDate(user.dob),
         gender: user.gender || "",
       });
     }
   }, [user]);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "Không có thông tin";
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProfileData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleEditToggle = () => {
+    setIsEditing((prevEditing) => !prevEditing);
   };
 
   const handleSave = async () => {
     try {
-      const res = await axios.put("http://localhost:4000/api/v1/user/patient/update", formData, {
+      const res = await axios.put("http://localhost:4000/api/v1/user/patient/update", profileData, {
         withCredentials: true,
-        headers: { "Content-Type": "application/json" },
       });
-      toast.success("Thông tin đã được cập nhật thành công.");
-      setUser(res.data.user); // Cập nhật lại user trong Context
+      toast.success("Thông tin đã được cập nhật!");
       setIsEditing(false);
-    } catch (error) {
-      toast.error(error.response.data.message || "Có lỗi xảy ra.");
+      setUser(res.data.updatedUser);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Đã có lỗi xảy ra!");
     }
   };
 
-  // Hàm xử lý nút Hủy
   const handleCancel = () => {
-    setIsEditing(false); // Đóng chế độ chỉnh sửa
-    setFormData({
+    setProfileData({
       firstName: user.firstName || "",
       lastName: user.lastName || "",
       email: user.email || "",
       phone: user.phone || "",
       nic: user.nic || "",
-      dob: user.dob ? new Date(user.dob).toISOString().split("T")[0] : "",
+      dob: formatDate(user.dob),
       gender: user.gender || "",
-    }); // Khôi phục lại dữ liệu ban đầu
+    });
+    setIsEditing(false);
   };
 
   return (
     <div className="page-content">
-      <section className="profile-page">
-        <h2>Thông tin cá nhân</h2>
-        <p>Họ và Tên: 
-          {isEditing ? (
-            <>
+      <section className="Profile page">
+        <div className="img-container">
+          <img src="/thay-ba-1.jpg" alt="Profile" />
+          <div className="text-profile">
+            
+Chào mừng bạn đến với Bệnh viện Nha khoa của chúng tôi, nơi chúng tôi cam kết mang đến sự chăm sóc toàn diện và tận tâm nhất cho nụ cười của bạn. Với đội ngũ bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại và công nghệ tiên tiến, chúng tôi cung cấp đa dạng dịch vụ từ cạo vôi, trám răng đến chỉnh nha, trồng răng implant. Sức khỏe và sự hài lòng của bạn là ưu tiên hàng đầu, và chúng tôi luôn tạo ra môi trường thân thiện, thoải mái để bạn cảm thấy an tâm trong suốt quá trình điều trị. Hãy để chúng tôi đồng hành cùng bạn trong hành trình bảo vệ và nâng tầm nụ cười của bạn!
+          </div>
+        </div>
+        <div className="bannerstatus">
+          <h5>Thông Tin Cá Nhân</h5>
+          <form>
+            <div className="form-group">
+              <label>Họ và Tên:</label>
               <input
                 type="text"
                 name="firstName"
-                value={formData.firstName}
+                value={profileData.firstName|| ""}
                 onChange={handleChange}
-                placeholder="Họ"
+                disabled={!isEditing}
               />
               <input
                 type="text"
                 name="lastName"
-                value={formData.lastName}
+                value={profileData.lastName || ""}
                 onChange={handleChange}
-                placeholder="Tên"
+                disabled={!isEditing}
               />
-            </>
-          ) : (
-            `${user.firstName} ${user.lastName}`
-          )}
-        </p>
-        <p>Email: 
-          {isEditing ? (
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email"
-            />
-          ) : (
-            user.email
-          )}
-        </p>
-        <p>Số điện thoại: 
-          {isEditing ? (
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Số điện thoại"
-            />
-          ) : (
-            user.phone || "Không có thông tin"
-          )}
-        </p>
-        <p>CCCD: 
-          {isEditing ? (
-            <input
-              type="text"
-              name="nic"
-              value={formData.nic}
-              readOnly  // Make NIC field read-only
-            />
-          ) : (
-            user.nic || "Không có thông tin"
-          )}
-        </p>
-        <p>Ngày/Tháng/Năm: 
-          {isEditing ? (
-            <input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleChange}
-              placeholder="Ngày/Tháng/Năm"
-            />
-          ) : (
-            formatDate(user.dob)
-          )}
-        </p>
-        <p>Giới tính: 
-          {isEditing ? (
-            <select name="gender" value={formData.gender} onChange={handleChange}>
-              <option value="">Chọn Giới Tính</option>
-              <option value="Nam">Nam</option>
-              <option value="Nữ">Nữ</option>
-            </select>
-          ) : (
-            user.gender || "Không có thông tin"
-          )}
-        </p>
-        {isEditing ? (
-          <>
-            <button onClick={handleSave}>Lưu</button>
-            <button onClick={handleCancel}>Hủy</button> {/* Nút Hủy */}
-          </>
-        ) : (
-          <button onClick={() => setIsEditing(true)}>Chỉnh sửa</button>
-        )}
+            </div>
+            <div className="form-group">
+              <label>Email:</label>
+              <input
+                type="email"
+                name="email"
+                value={profileData.email || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="form-group">
+              <label>Số Điện Thoại:</label>
+              <input
+                type="tel"
+                name="phone"
+                value={profileData.phone || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="form-group">
+              <label>CCCD:</label>
+              <input
+                type="text"
+                name="nic"
+                value={profileData.nic || ""}
+                disabled
+              />
+            </div>
+            <div className="form-group">
+              <label>Ngày/Tháng/Năm:</label>
+              <input
+                type="date"
+                name="dob"
+                value={profileData.dob || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="form-group">
+              <label>Giới Tính:</label>
+              <select
+                name="gender"
+                value={profileData.gender || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              >
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+              </select>
+            </div>
+            <div className="form-actions">
+              {isEditing ? (
+                <>
+                  <button type="button" onClick={handleCancel}>Hủy</button>
+                  <button type="button" onClick={handleSave}>Lưu</button>
+                </>
+              ) : (
+                <button type="button" onClick={handleEditToggle}>Chỉnh sửa</button>
+              )}
+            </div>
+          </form>
+        </div>
       </section>
     </div>
   );
 };
 
 export default Profile;
+//hello
