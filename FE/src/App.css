@@ -613,7 +613,7 @@ nav .dropdown {
   top: 98px; /* Tăng giá trị này để dropdown hiển thị phía dưới */
   width: 320px;
   left: 0; 
-  margin-left: 83.3%;
+  margin-left: 85.2%;
   display: flex;
   flex-direction: column;
   gap: 0;
