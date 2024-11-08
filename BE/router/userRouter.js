@@ -20,4 +20,4 @@ router.put("/doctors/update/:id", updateDoctorHandler);
 router.put("/patients/update/:id", updatePatientHandler);
 router.get('/verify/:token', verifyEmail);
 
-export default router;  
+export default router;

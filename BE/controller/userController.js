@@ -124,8 +124,8 @@ export const login = catchAsyncErrors(async(req,res,next) => {
   if (!isPasswordMatched) {
       return next(new ErrorHandler("Email hoặc mật khẩu không chính xác!", 400));
   }
-  if (!user.isVerified) {
-      return next(new ErrorHandler("Vui lòng xác thực email trước khi đăng nhập!", 400));
+  if (role !== "Admin" && !user.isVerified) {
+    return next(new ErrorHandler("Vui lòng xác thực email trước khi đăng nhập!", 400));
   }
   if (role !== user.role) {
       return next(new ErrorHandler("Không tìm thấy người dùng với vai trò này!", 400));
