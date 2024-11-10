@@ -1,64 +1,91 @@
 import { MedicalRecord } from "../models/medicalRecordSchema.js";
-import { User } from "../models/userSchema.js"; // Model người dùng
+import { Appointment } from "../models/appointmentSchema.js";
 
 // Tạo hồ sơ bệnh án
 export const createMedicalRecord = async (req, res) => {
-    try {
-      // Truy vấn thông tin bệnh nhân bằng NIC từ request body
-      const patient = await User.findById(req.body.patientId);
-  
-      if (!patient) {
-        return res.status(404).json({
-          success: false,
-          message: "Không tìm thấy bệnh nhân với CCCD đã cung cấp!",
-        });
-      }
-  
-      // Tạo hồ sơ bệnh án với thông tin bệnh nhân đã tìm được
-      const medicalRecord = new MedicalRecord({
-        ...req.body,
-        patient: {
-          firstName: patient.firstName,
-          lastName: patient.lastName,
-          dob: patient.dob,
-          gender: patient.gender,
-          patientId: patient._id,
-        },
-      });
-  
-      // Lưu hồ sơ bệnh án vào cơ sở dữ liệu
-      await medicalRecord.save();
-  
-      // Phản hồi thành công với thông báo rõ ràng
-      res.status(201).json({
-        success: true,
-        message: "Hồ sơ bệnh án đã được tạo thành công!",
-        medicalRecord,  // Dữ liệu hồ sơ bệnh án
-      });
-    } catch (error) {
-      res.status(400).json({
+  try {
+    // Truy vấn thông tin từ appointmentId trong request body
+    const appointment = await Appointment.findById(req.body.appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({
         success: false,
-        message: "Không thể tạo hồ sơ bệnh án.",
-        error: error.message,
+        message: "Không tìm thấy lịch hẹn với ID đã cung cấp!",
       });
     }
-  };
-  
 
+    // Tạo hồ sơ bệnh án với đầy đủ thông tin của bác sĩ từ lịch hẹn
+    const medicalRecord = new MedicalRecord({
+      appointmentId: req.body.appointmentId,
+      examinationDate: req.body.examinationDate,
+      doctor: {
+        firstName: appointment.doctor.firstName,
+        lastName: appointment.doctor.lastName,
+        department: appointment.department,
+        doctorId: appointment.doctorId,
+      },
+      diagnosis: req.body.diagnosis,
+      prescriptions: req.body.prescriptions,
+    });
+
+    // Lưu hồ sơ bệnh án vào cơ sở dữ liệu
+    await medicalRecord.save();
+
+    // Phản hồi thành công với thông báo rõ ràng
+    res.status(201).json({
+      success: true,
+      message: "Hồ sơ bệnh án đã được tạo thành công!",
+      medicalRecord,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Không thể tạo hồ sơ bệnh án.",
+      error: error.message,
+    });
+  }
+};
+
+
+// Lấy hồ sơ bệnh án theo ID
 // Lấy hồ sơ bệnh án theo ID
 export const getMedicalRecordById = async (req, res) => {
   try {
-    const record = await MedicalRecord.findById(req.params.id).populate("patientId", "firstName lastName dob gender");
+    // Tìm hồ sơ bệnh án theo ID
+    const record = await MedicalRecord.findById(req.params.id)
+      .populate("appointmentId")  // Populate thông tin lịch hẹn, bao gồm patientId
+      .exec();
+
     if (!record) {
       return res.status(404).json({
         success: false,
         message: "Hồ sơ không tồn tại!",
       });
     }
+
+    // Lấy thông tin bệnh nhân từ patientId trong appointmentId
+    const patient = record.appointmentId ? record.appointmentId.patientId : null;
+
+    // Kiểm tra nếu có thông tin bệnh nhân
+    const formattedRecord = {
+      _id: record._id,
+      patient: patient ? {
+        firstName: patient.firstName,
+        lastName: patient.lastName,
+        dob: patient.dob,
+        gender: patient.gender,
+      } : null,  // Hiển thị thông tin bệnh nhân nếu có
+      examinationDate: record.examinationDate,
+      doctor: record.doctor,
+      diagnosis: record.diagnosis,
+      prescriptions: record.prescriptions,
+      appointmentId: record.appointmentId._id, // Lấy thông tin lịch hẹn
+    };
+
     res.status(200).json({
       success: true,
       message: "Hồ sơ bệnh án được tìm thấy!",
-      record,
+      record: formattedRecord,
     });
   } catch (error) {
     res.status(400).json({
@@ -68,6 +95,8 @@ export const getMedicalRecordById = async (req, res) => {
     });
   }
 };
+
+
 
 // Cập nhật hồ sơ bệnh án
 export const updateMedicalRecord = async (req, res) => {
@@ -121,34 +150,35 @@ export const deleteMedicalRecord = async (req, res) => {
       error: error.message,
     });
   }
-  // medicalRecordController.js
 };
 export const getIdMedicalRecord = async (req, res) => {
-    try {
-        const userId = req.params.id; // Lấy userId từ tham số route
+  try {
+    const appointmentId = req.params.id; // Lấy appointmentId từ tham số route
 
-        // Truy vấn các hồ sơ bệnh án theo `patientId`
-        const medicalRecords = await MedicalRecord.find({ patientId: userId }) // Lọc theo `patientId`
-            .select("_id examinationDate"); // Chỉ lấy `_id` và `examinationDate`
+    // Truy vấn các hồ sơ bệnh án theo `appointmentId` và lấy các trường _id, examinationDate
+    const medicalRecords = await MedicalRecord.find({ appointmentId: appointmentId })
+      .select("_id examinationDate"); // Chỉ chọn trường _id và examinationDate
 
-        if (!medicalRecords || medicalRecords.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Không tìm thấy hồ sơ bệnh án của bệnh nhân này!",
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "Hồ sơ bệnh án được tìm thấy!",
-            medicalRecords, // Trả về danh sách hồ sơ bệnh án
-        });
-    } catch (err) {
-        console.error("Lỗi khi lấy hồ sơ bệnh án:", err); // Log lỗi chi tiết để debug
-        res.status(500).json({ message: "Lỗi khi lấy hồ sơ bệnh án", error: err.message }); // Trả về chi tiết lỗi
+    if (!medicalRecords || medicalRecords.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy hồ sơ bệnh án cho cuộc hẹn này!",
+      });
     }
+
+    // Trả về danh sách hồ sơ bệnh án (chỉ gồm _id và examinationDate)
+    res.status(200).json({
+      success: true,
+      message: "Hồ sơ bệnh án được tìm thấy!",
+      medicalRecords,  // Chứa danh sách các hồ sơ bệnh án với thông tin _id và examinationDate
+    });
+  } catch (err) {
+    console.error("Lỗi khi lấy hồ sơ bệnh án:", err);
+    res.status(500).json({
+      message: "Lỗi khi lấy hồ sơ bệnh án",
+      error: err.message,
+    });
+  }
 };
 
-  
 
-  

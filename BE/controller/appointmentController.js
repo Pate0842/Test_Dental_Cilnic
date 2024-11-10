@@ -88,6 +88,8 @@ export const getAllAppointments = catchAsyncErrors(async (req, res, next) => {
       appointments,
     });
 });
+
+
 export const getUserAppointments = catchAsyncErrors(async (req, res, next) => {
   const patientId = req.user._id; // Lấy ID người dùng đã đăng nhập từ middleware
   console.log("Patient ID:", patientId); // Kiểm tra ID bệnh nhân
@@ -100,10 +102,11 @@ export const getUserAppointments = catchAsyncErrors(async (req, res, next) => {
   }
 
   res.status(200).json({
-      success: true,
-      appointments,
+    success: true,
+    appointments,
   });
 });
+
 
 export const updateAppointmentStatus = catchAsyncErrors(
     async (req, res, next) => {
@@ -137,3 +140,29 @@ export const updateAppointmentStatus = catchAsyncErrors(
       appointment
     });
   });
+
+  export const getAppointmentById = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const appointment = await Appointment.findById(id);
+  
+      if (!appointment) {
+        return res.status(404).json({
+          success: false,
+          message: "Không tìm thấy cuộc hẹn.",
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        appointment,
+      });
+    } catch (error) {
+      console.error("Lỗi khi truy vấn thông tin cuộc hẹn:", error);
+      res.status(500).json({
+        success: false,
+        message: "Lỗi khi truy vấn thông tin cuộc hẹn.",
+        error: error.message,
+      });
+    }
+  };

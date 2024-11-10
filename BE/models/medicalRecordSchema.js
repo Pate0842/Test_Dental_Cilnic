@@ -1,25 +1,6 @@
 import mongoose from "mongoose";
 
 const medicalRecordSchema = new mongoose.Schema({
-  patient: {
-    firstName: {
-      type: String,
-      required: [true, "Tên bệnh nhân là bắt buộc!"],
-    },
-    lastName: {
-      type: String,
-      required: [true, "Họ bệnh nhân là bắt buộc!"],
-    },
-    dob: {
-      type: Date,
-      required: [true, "Ngày sinh của bệnh nhân là bắt buộc!"],
-    },
-    gender: {
-      type: String,
-      required: [true, "Giới tính của bệnh nhân là bắt buộc!"],
-      enum: ["Nam", "Nữ"],
-    },
-  },
   examinationDate: {
     type: Date,
     required: [true, "Ngày khám là bắt buộc!"],
@@ -61,14 +42,18 @@ const medicalRecordSchema = new mongoose.Schema({
       unit: {
         type: String,
         required: [true, "Đơn vị là bắt buộc!"],
-        enum: ["viên", "gói", "ống"],
+        enum: ["Viên", "Gói", "Ống"],
         default: "viên",
+      },
+      usage: {
+        type: String,
+        required: [true, "Cách dùng là bắt buộc!"],
       },
     },
   ],
-  patientId: {
+  appointmentId: {
     type: mongoose.Schema.ObjectId,
-    ref: "User",
+    ref: "Appointment",
     required: true,
   },
 });
