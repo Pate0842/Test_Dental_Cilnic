@@ -42,8 +42,12 @@ const medicalRecordSchema = new mongoose.Schema({
       unit: {
         type: String,
         required: [true, "Đơn vị là bắt buộc!"],
-        enum: ["viên", "gói", "ống"],
+        enum: ["Viên", "Gói", "Ống"],
         default: "viên",
+      },
+      usage: {
+        type: String,
+        required: [true, "Cách dùng là bắt buộc!"],
       },
     },
   ],

@@ -4,7 +4,6 @@ import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-
 const Dashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -16,7 +15,18 @@ const Dashboard = () => {
           "http://localhost:4000/api/v1/appointment/getall",
           { withCredentials: true }
         );
-        setAppointments(data.appointments);
+
+        // Lọc các cuộc hẹn chỉ trong ngày hôm nay
+        const today = new Date();
+        const todayStart = new Date(today.setHours(0, 0, 0, 0));  // Lấy mốc bắt đầu của ngày hôm nay
+        const todayEnd = new Date(today.setHours(23, 59, 59, 999));  // Lấy mốc cuối của ngày hôm nay
+
+        const filteredAppointments = data.appointments.filter((appointment) => {
+          const appointmentDate = new Date(appointment.appointment_date);
+          return appointmentDate >= todayStart && appointmentDate <= todayEnd;
+        });
+
+        setAppointments(filteredAppointments);
       } catch {
         setAppointments([]);
       }
@@ -40,15 +50,24 @@ const Dashboard = () => {
   }, []);
 
   const handleUpdateStatus = async (appointmentId, status) => {
+    // Find the current appointment
+    const appointment = appointments.find((app) => app._id === appointmentId);
+  
+    // Check if the status has already been updated from "Đang Chờ"
+    if (appointment.status !== "Đang Chờ") {
+      toast.error("Bạn không thể thay đổi trạng thái cuộc hẹn này nữa!");
+      return; // Stop further execution if status is already updated
+    }
+  
     try {
-      const hasVisited = status === "Đã Chấp Nhận"; // Tự động đánh dấu hasVisited
+      const hasVisited = status === "Đã Chấp Nhận"; // Automatically mark as visited if accepted
       const { data } = await axios.put(
         `http://localhost:4000/api/v1/appointment/update/${appointmentId}`,
         { status, hasVisited },
         { withCredentials: true }
       );
   
-      // Cập nhật lại danh sách lịch hẹn trong state
+      // Update the state with the new status
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
           appointment._id === appointmentId
@@ -57,8 +76,6 @@ const Dashboard = () => {
         )
       );
   
-      // Gọi fetchAppointments của AppointmentStatus nếu cần
-      // Có thể sử dụng một callback hoặc Context để thông báo
       toast.success(data.message);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -81,15 +98,9 @@ const Dashboard = () => {
               <div>
                 <p>Hello ,</p>
                 <h5>
-                  {admin &&
-                    `${admin.firstName} ${admin.lastName}`}{" "}
+                  {admin && `${admin.firstName} ${admin.lastName}`}{" "}
                 </h5>
               </div>
-              {/* <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Facilis, nam molestias. Eaque molestiae ipsam commodi neque.
-                Assumenda repellendus necessitatibus itaque.
-              </p> */}
             </div>
           </div>
           <div className="secondBox">
@@ -124,30 +135,35 @@ const Dashboard = () => {
                       <td>{appointment.phone}</td>
                       <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>
                       <td>
-                         <select
+                        <select
                           className={
-                          appointment.status === "Đang Chờ"
-                          ? "value-pending"
-                          : appointment.status === "Đã Chấp Nhận"
-                          ? "value-accepted"
-                          : "value-rejected"
-                            }
-                            value={appointment.status}
-                           onChange={(e) =>
-                             handleUpdateStatus(appointment._id, e.target.value)
+                            appointment.status === "Đang Chờ"
+                              ? "value-pending"
+                              : appointment.status === "Đã Chấp Nhận"
+                              ? "value-accepted"
+                              : "value-rejected"
                           }
-                          >
-                           <option value="Đang Chờ" className="value-pending">Đang Chờ</option> {/* Chỉnh sửa chữ "Chờ" in hoa */}
-                           <option value="Đã Chấp Nhận" className="value-accepted">Đã Chấp Nhận</option>
-                           <option value="Đã Từ Chối" className="value-rejected">Đã Từ Chối</option>
-                           </select>
+                          value={appointment.status}
+                          onChange={(e) =>
+                            handleUpdateStatus(appointment._id, e.target.value)
+                          }
+                        >
+                          <option value="Đang Chờ" className="value-pending">
+                            Đang Chờ
+                          </option>
+                          <option value="Đã Chấp Nhận" className="value-accepted">
+                            Đã Chấp Nhận
+                          </option>
+                          <option value="Đã Từ Chối" className="value-rejected">
+                            Đã Từ Chối
+                          </option>
+                        </select>
                       </td>
                     </tr>
                   ))
                 : "No Appointments Found!"}
             </tbody>
           </table>
-          {}
         </div>
       </section>
     </>

@@ -124,7 +124,7 @@ export const login = catchAsyncErrors(async(req,res,next) => {
   if (!isPasswordMatched) {
       return next(new ErrorHandler("Email hoặc mật khẩu không chính xác!", 400));
   }
-  if (role !== "Admin" && !user.isVerified) {
+  if (role !== "Admin" && role !== "Bác sĩ" && !user.isVerified) {
     return next(new ErrorHandler("Vui lòng xác thực email trước khi đăng nhập!", 400));
   }
   if (role !== user.role) {
@@ -298,6 +298,19 @@ export const logoutPatient = catchAsyncErrors(async (req, res, next) => {
     .json({
       success: true,
       message: "Bệnh nhân đăng xuất thành công.",
+    });
+});
+
+export const logoutDoctor = catchAsyncErrors(async (req, res, next) => {
+  res
+    .status(201)
+    .cookie("doctorToken", "", {
+      httpOnly: true,
+      expires: new Date(Date.now()),
+    })
+    .json({
+      success: true,
+      message: "Bác sĩ đăng xuất thành công.",
     });
 });
 

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 const Account = () => {
   const [patients, setPatients] = useState([]); 
   const { isAuthenticated, admin } = useContext(Context);
+  const [doctors, setDoctors] = useState([]);
   const navigateTo = useNavigate();
 
   // Hàm để lấy dữ liệu người dùng từ API
@@ -32,6 +33,21 @@ const Account = () => {
 
   useEffect(() => {
     fetchPatients(); // Gọi hàm để lấy dữ liệu khi component được mount
+  }, []);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:4000/api/v1/user/doctors",
+          { withCredentials: true }
+        );
+        setDoctors(data.doctors);
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
+    };
+    fetchDoctors();
   }, []);
 
   // Kiểm tra nếu người dùng chưa đăng nhập thì chuyển hướng đến trang đăng nhập
@@ -71,10 +87,12 @@ const Account = () => {
           </div>
         </div>
         <div className="secondBox">
-          <p>Tổng số cuộc hẹn</p>
+          <p>Tổng số người dùng</p>
+          <h3>{patients.length}</h3>
         </div>
         <div className="thirdBox">
           <p>Tổng số bác sĩ</p>
+          <h3>{doctors.length}</h3>
         </div>
       </div>
       <div className="banner">
