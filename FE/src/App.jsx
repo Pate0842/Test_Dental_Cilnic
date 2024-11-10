@@ -12,8 +12,11 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { Context } from "./main";
 import Login from "./pages/Login";
-import AppointmentStatus from "./pages/Appointmentstatus";
+import AppointmentStatus from "./pages/AppointmentStatus";
 import Profile from "./pages/Profile"; // Import trang mới
+import VerificationSuccess from './pages/Verificationsuccess.jsx';
+import MedicalRecord from './pages/MedicalRecord'; 
+import DetailsMedicalRecord from "./components/DetailsMedicalRecord";
 
 const App = () => {
   const {  setIsAuthenticated, setUser } = useContext(Context);
@@ -50,7 +53,9 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/appointmentstatus" element={<AppointmentStatus />} />
           <Route path="/profile" element={<Profile />} />
-          
+          <Route path="/verification-success" element={<VerificationSuccess />} />
+          <Route path="/medical-record" element={<MedicalRecord />} /> 
+          <Route path="/details-medical-record/:id" element={<DetailsMedicalRecord />} /> 
         </Routes>
         <Footer />
         <ToastContainer position="top-center" />

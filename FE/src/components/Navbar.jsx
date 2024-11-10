@@ -61,8 +61,8 @@ const Navbar = () => {
                   <Link to="/profile" onClick={() => setShow(!show)}>
                     Thông tin cá nhân
                   </Link>
-                  <Link to="/profile" onClick={() => setShow(!show)}>
-                    Lịch sử khám bệnh
+                  <Link to="/medical-record" onClick={() => setShow(!show)}>
+                    Hồ sơ bệnh án
                   </Link>
                   <button className="logoutBtn btn" onClick={handleLogout}>
                     Đăng xuất
