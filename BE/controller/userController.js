@@ -124,8 +124,8 @@ export const login = catchAsyncErrors(async(req,res,next) => {
   if (!isPasswordMatched) {
       return next(new ErrorHandler("Email hoặc mật khẩu không chính xác!", 400));
   }
-  if (!user.isVerified) {
-      return next(new ErrorHandler("Vui lòng xác thực email trước khi đăng nhập!", 400));
+  if (role !== "Admin" && !user.isVerified) {
+    return next(new ErrorHandler("Vui lòng xác thực email trước khi đăng nhập!", 400));
   }
   if (role !== user.role) {
       return next(new ErrorHandler("Không tìm thấy người dùng với vai trò này!", 400));
@@ -424,19 +424,58 @@ export const updatePatientProfile = catchAsyncErrors(async (req, res, next) => {
       return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
     }
 
-    // Cập nhật thông tin người dùng
     Object.assign(patient, { firstName, lastName, email, phone, gender, dob, nic });
 
-    // Lưu và trả về thông tin bệnh nhân đã cập nhật
-    const updatedPatient = await patient.save();
+    await patient.save();
 
     res.status(200).json({
       success: true,
       message: "Cập nhật hồ sơ bệnh nhân thành công!",
-      patient: updatedPatient,  // Trả về thông tin bệnh nhân đã cập nhật
+      patient,
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật hồ sơ bệnh nhân:", error);
     next(new ErrorHandler("Có lỗi xảy ra khi cập nhật hồ sơ bệnh nhân.", 500));
+  }
+});
+
+
+
+export const updatePatientHandler = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const patient = await User.findById(id);
+
+    if (!patient || patient.role !== "Bệnh nhân") {
+      return next(new ErrorHandler("Không tìm thấy bệnh nhân", 404));
+    }
+
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      gender,
+      dob,
+      nic,
+    } = req.body;
+
+    if (!firstName || !lastName || !email || !phone || !gender || !dob || !nic) {
+      return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
+    }
+
+    Object.assign(patient, { firstName, lastName, email, phone, gender, dob, nic });
+
+
+    await patient.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Cập nhật tài khoản bệnh nhân thành công!",
+      patient,
+    });
+  } catch (error) {
+    console.error("Lỗi khi cập nhật tài khoản bệnh nhân:", error);
+    next(new ErrorHandler("Có lỗi xảy ra khi cập nhật tài khoản bệnh nhân.", 500));
   }
 });
