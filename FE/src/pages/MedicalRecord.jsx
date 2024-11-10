@@ -6,30 +6,56 @@ import { useNavigate } from "react-router-dom";
 
 const MedicalRecordStatus = () => {
   const { user } = useContext(Context);
-  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [medicalRecords, setMedicalRecords] = useState([]); 
+  const [appointments, setAppointments] = useState([]); // Lưu danh sách các cuộc hẹn
   const navigate = useNavigate();
 
+  // Lấy danh sách cuộc hẹn của người dùng
   useEffect(() => {
     if (user && user._id) {
-      fetchMedicalRecords(user._id);
+      fetchUserAppointments(user._id);  // Truy vấn cuộc hẹn dựa trên userId
     }
   }, [user]);
 
-  const fetchMedicalRecords = async (userId) => {
+  // Lấy thông tin hồ sơ bệnh án từ appointmentId
+  useEffect(() => {
+    if (appointments.length > 0) {
+      fetchMedicalRecords(appointments[0]._id);  // Dùng appointmentId từ cuộc hẹn đầu tiên
+    }
+  }, [appointments]);
+
+  const fetchUserAppointments = async (userId) => {
     try {
-      const res = await axios.get(`http://localhost:4000/api/v1/medicalrecord/getuserrecords/${userId}`, {
+      const res = await axios.get(`http://localhost:4000/api/v1/appointment/getuserappointments`, {
+        params: { userId }, // Truyền userId trong query parameters
         withCredentials: true,
       });
-      const sortedRecords = res.data.medicalRecords.sort((a, b) => 
+
+      if (res.data.success) {
+        setAppointments(res.data.appointments);
+      } else {
+        toast.error("Không có cuộc hẹn nào!");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Đã có lỗi xảy ra khi tải lịch hẹn!");
+    }
+  };
+
+  const fetchMedicalRecords = async (appointmentId) => {
+    try {
+      const res = await axios.get(`http://localhost:4000/api/v1/medicalrecord/getuserrecords/${appointmentId}`, {
+        withCredentials: true,
+      });
+
+      const sortedRecords = res.data.medicalRecords.sort((a, b) =>
         new Date(b.examinationDate) - new Date(a.examinationDate)
       );
       setMedicalRecords(sortedRecords);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Đã có lỗi xảy ra!");
+      toast.error(err.response?.data?.message || "Không thể tải hồ sơ bệnh án!");
     }
   };
 
-  // Chuyển hướng tới trang chi tiết hồ sơ bệnh án với ID cụ thể
   const handleIdClick = (recordId) => {
     navigate(`/details-medical-record/${recordId}`);
   };
@@ -39,28 +65,32 @@ const MedicalRecordStatus = () => {
       <section className="MedicalRecordStatus page">
         <div className="MedicalRecord-bannerstatus">
           <h5>Trạng Thái Hồ Sơ Bệnh Án</h5>
-          <table>
-            <thead>
-              <tr>
-                <th>ID Bệnh Án</th>
-                <th>Ngày Khám</th>
-              </tr>
-            </thead>
-            <tbody>
-              {medicalRecords.length === 0 ? (
+          {medicalRecords.length === 0 ? (
+            <div className="text-center p-4">Không có hồ sơ bệnh án nào.</div>
+          ) : (
+            <table className="w-full">
+              <thead>
                 <tr>
-                  <td colSpan="2" style={{ textAlign: "center" }}>Không có hồ sơ bệnh án nào.</td>
+                  <th className="p-2 border">ID Hồ Sơ Bệnh Án</th>
+                  <th className="p-2 border">Ngày Khám</th>
                 </tr>
-              ) : (
-                medicalRecords.map((record) => (
-                  <tr key={record._id} onClick={() => handleIdClick(record._id)}>
-                    <td style={{ cursor: "pointer", color: "blue" }}>{record._id}</td>
-                    <td>{new Date(record.examinationDate).toLocaleDateString()}</td>
+              </thead>
+              <tbody>
+                {medicalRecords.map((record) => (
+                  <tr
+                    key={record._id}
+                    onClick={() => handleIdClick(record._id)}
+                    className="hover:bg-gray-100 cursor-pointer"
+                  >
+                    <td className="p-2 border text-blue-600">{record._id}</td>
+                    <td className="p-2 border">
+                      {new Date(record.examinationDate).toLocaleDateString()}
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
     </div>

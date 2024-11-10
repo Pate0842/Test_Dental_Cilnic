@@ -46,12 +46,14 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      const res = await axios.put("http://localhost:4000/api/v1/user/patient/update", profileData, {
+      // Sửa lại URL để truyền đúng userId từ context hoặc từ biến user
+      const userId = user._id;  // Giả sử user có trường _id
+      const res = await axios.put(`http://localhost:4000/api/v1/user/patients/update/${userId}`, profileData, {
         withCredentials: true,
       });
       toast.success("Thông tin đã được cập nhật!");
       setIsEditing(false);
-      setUser(res.data.updatedUser);
+      setUser(res.data.updatedUser); // Giả sử response trả về trường updatedUser
     } catch (err) {
       toast.error(err.response?.data?.message || "Đã có lỗi xảy ra!");
     }
@@ -76,8 +78,7 @@ const Profile = () => {
         <div className="img-container">
           <img src="/thay-ba-1.jpg" alt="Profile" />
           <div className="text-profile">
-            
-Chào mừng bạn đến với Bệnh viện Nha khoa của chúng tôi, nơi chúng tôi cam kết mang đến sự chăm sóc toàn diện và tận tâm nhất cho nụ cười của bạn. Với đội ngũ bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại và công nghệ tiên tiến, chúng tôi cung cấp đa dạng dịch vụ từ cạo vôi, trám răng đến chỉnh nha, trồng răng implant. Sức khỏe và sự hài lòng của bạn là ưu tiên hàng đầu, và chúng tôi luôn tạo ra môi trường thân thiện, thoải mái để bạn cảm thấy an tâm trong suốt quá trình điều trị. Hãy để chúng tôi đồng hành cùng bạn trong hành trình bảo vệ và nâng tầm nụ cười của bạn!
+            Chào mừng bạn đến với Bệnh viện Nha khoa của chúng tôi, nơi chúng tôi cam kết mang đến sự chăm sóc toàn diện và tận tâm nhất cho nụ cười của bạn. Với đội ngũ bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại và công nghệ tiên tiến, chúng tôi cung cấp đa dạng dịch vụ từ cạo vôi, trám răng đến chỉnh nha, trồng răng implant. Sức khỏe và sự hài lòng của bạn là ưu tiên hàng đầu, và chúng tôi luôn tạo ra môi trường thân thiện, thoải mái để bạn cảm thấy an tâm trong suốt quá trình điều trị. Hãy để chúng tôi đồng hành cùng bạn trong hành trình bảo vệ và nâng tầm nụ cười của bạn!
           </div>
         </div>
         <div className="bannerstatus">
@@ -88,7 +89,7 @@ Chào mừng bạn đến với Bệnh viện Nha khoa của chúng tôi, nơi c
               <input
                 type="text"
                 name="firstName"
-                value={profileData.firstName|| ""}
+                value={profileData.firstName || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
               />
@@ -169,4 +170,3 @@ Chào mừng bạn đến với Bệnh viện Nha khoa của chúng tôi, nơi c
 };
 
 export default Profile;
-//hello
