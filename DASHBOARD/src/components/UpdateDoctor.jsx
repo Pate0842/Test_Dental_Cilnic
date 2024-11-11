@@ -20,7 +20,7 @@ const UpdateDoctor = () => {
   const [doctorDepartment, setDoctorDepartment] = useState(doctor?.doctorDepartment || "");
   const [docAvatar, setDocAvatar] = useState("");
   const [docAvatarPreview, setDocAvatarPreview] = useState(doctor?.docAvatar?.url || "");
-  const [password, setPassword] = useState("");
+
   const departmentsArray = [
     "NHA NHI",
     "PHẪU THUẬT HÀM MẶT",
@@ -57,7 +57,6 @@ const UpdateDoctor = () => {
       formData.append("doctorDepartment", doctorDepartment);
 
       if (docAvatar) formData.append("docAvatar", docAvatar);
-      if (password) formData.append("password", password);
 
       await axios.put(`http://localhost:4000/api/v1/user/doctors/update/${doctor._id}`, formData, {
         withCredentials: true,
@@ -102,7 +101,6 @@ const UpdateDoctor = () => {
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
               </select>
-              <input type="password" placeholder="Password (Nếu muốn đổi)" value={password} onChange={(e) => setPassword(e.target.value)} />
               <select value={doctorDepartment} onChange={(e) => setDoctorDepartment(e.target.value)}>
                 <option value="">Chuyên khoa</option>
                 {departmentsArray.map((depart, index) => (

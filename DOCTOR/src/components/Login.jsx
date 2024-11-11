@@ -47,7 +47,7 @@ const Login = () => {
       <section className="container form-component">
         <img src="/logo.png" alt="logo" className="logo" />
         <h1 className="form-title">CHÀO MỪNG TỚI HAPPY TEETH</h1>
-        <p>Chỉ Admin được phép truy cập vào trang này!</p>
+        <p>Chỉ Bác Sĩ được phép truy cập vào trang này!</p>
         <form onSubmit={handleLogin}>
           <input
             type="text"

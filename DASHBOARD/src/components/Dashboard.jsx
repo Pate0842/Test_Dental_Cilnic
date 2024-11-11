@@ -16,17 +16,8 @@ const Dashboard = () => {
           { withCredentials: true }
         );
 
-        // Lọc các cuộc hẹn chỉ trong ngày hôm nay
-        const today = new Date();
-        const todayStart = new Date(today.setHours(0, 0, 0, 0));  // Lấy mốc bắt đầu của ngày hôm nay
-        const todayEnd = new Date(today.setHours(23, 59, 59, 999));  // Lấy mốc cuối của ngày hôm nay
-
-        const filteredAppointments = data.appointments.filter((appointment) => {
-          const appointmentDate = new Date(appointment.appointment_date);
-          return appointmentDate >= todayStart && appointmentDate <= todayEnd;
-        });
-
-        setAppointments(filteredAppointments);
+        // Display all appointments without filtering
+        setAppointments(data.appointments);
       } catch {
         setAppointments([]);
       }
@@ -130,7 +121,8 @@ const Dashboard = () => {
                 ? appointments.map((appointment) => (
                     <tr key={appointment._id}>
                       <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
-                      <td>{appointment.appointment_date.substring(0, 16)}</td>
+                      <td>{new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(appointment.appointment_date))}</td>
+
                       <td>{appointment.email}</td>
                       <td>{appointment.phone}</td>
                       <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>

@@ -121,7 +121,7 @@ const Register = () => {
           </div>
           <div
             style={{
-              gap: "10px",
+              gap: "18px",
               justifyContent: "flex-end",
               flexDirection: "row",
             }}

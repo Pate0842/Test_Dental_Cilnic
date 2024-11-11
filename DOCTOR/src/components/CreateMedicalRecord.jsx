@@ -261,4 +261,4 @@ const CreateMedicalRecord = () => {
   );
 };
 
-export default CreateMedicalRecord;
+export default CreateMedicalRecord; 
