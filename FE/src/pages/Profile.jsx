@@ -102,7 +102,7 @@ const Profile = () => {
           <h5>Thông Tin Cá Nhân</h5>
           <form>
   <div className="form-group">
-    <label>Họ và Tên:</label>
+    <label>Họ:</label>
     <input
       type="text"
       name="firstName"
@@ -110,6 +110,7 @@ const Profile = () => {
       onChange={handleChange}
       disabled={!isEditing}
     />
+    <label style={{margin:10}}>Tên:</label>
     <input
       type="text"
       name="lastName"
