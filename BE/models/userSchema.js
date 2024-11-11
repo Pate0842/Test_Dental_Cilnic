@@ -38,9 +38,60 @@ const userSchema = new mongoose.Schema({
   nic: {
     type: String,
     required: [true, "Số Căn cước công dân là bắt buộc!"],
-    minLength: [12, "Số Căn cước công dân phải chứa đúng 12 chữ số!"],
-    maxLength: [12, "Số Căn cước công dân phải chứa đúng 12 chữ số!"],
+    validate: {
+      validator: function (nic) {
+        const dob = this.dob;
+        const gender = this.gender;
+    
+        if (nic.length !== 12) {
+          throw new Error("Số CCCD phải chứa đúng 12 ký tự!");
+        }
+    
+        const provinceCode = nic.substring(0, 3);
+        const genderCode = nic[3];
+        const birthYearCode = nic.substring(4, 6);
+        const randomDigits = nic.substring(6);
+    
+        // Kiểm tra mã tỉnh
+        if (!validProvinces.includes(provinceCode)) {
+          throw new Error("Mã tỉnh không hợp lệ!");
+        }
+    
+        // Kiểm tra mã giới tính và thế kỷ sinh
+        const birthYear = dob.getFullYear();
+        const birthCentury = Math.floor((birthYear - 1) / 100) + 1;
+    
+        const genderCenturyMap = {
+          "20": { male: "0", female: "1" },
+          "21": { male: "2", female: "3" },
+          "22": { male: "4", female: "5" },
+          "23": { male: "6", female: "7" },
+        };
+    
+        const centuryKey = birthCentury.toString();
+        if (
+          !genderCenturyMap[centuryKey] ||
+          genderCenturyMap[centuryKey][gender === "Nam" ? "male" : "female"] !== genderCode
+        ) {
+          throw new Error("Mã giới tính hoặc thế kỷ sinh không hợp lệ!");
+        }
+    
+        // Kiểm tra mã năm sinh
+        if (birthYear.toString().slice(-2) !== birthYearCode) {
+          throw new Error("Mã năm sinh không khớp với ngày sinh!");
+        }
+    
+        // Kiểm tra 6 số ngẫu nhiên cuối
+        if (!/^\d{6}$/.test(randomDigits)) {
+          throw new Error("6 ký tự cuối của CCCD phải là số!");
+        }
+    
+        return true;
+      },
+      message: "Số Căn cước công dân không hợp lệ!",
+    },    
   },
+  
   dob: {
     type: Date,
     required: [true, "Ngày sinh là bắt buộc!"],
@@ -92,6 +143,16 @@ const validPrefixes = [
   "092", // Vietnamobile
   "059", // Gmobile
   "099" // Gmobile
+];
+
+const validProvinces = [
+  "001", "002", "004", "006", "008", "010", "011", "012", "014", "015",
+  "017", "019", "020", "022", "024", "025", "026", "027", "030", "031",
+  "033", "034", "035", "036", "037", "038", "040", "042", "044", "045",
+  "046", "048", "049", "051", "052", "054", "056", "058", "060", "062",
+  "064", "066", "067", "068", "070", "072", "074", "075", "077", "079",
+  "080", "082", "083", "084", "086", "087", "089", "091", "092", "093",
+  "094", "095", "096"
 ];
 
 // Middleware để tự động đặt ngày sinh nếu nó lớn hơn ngày hôm nay

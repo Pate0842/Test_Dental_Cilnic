@@ -27,11 +27,15 @@ export const patientRegister = catchAsyncErrors(async (req, res, next) => {
   
   // Kiểm tra email và mật khẩu
   let user = await User.findOne({ email });
+  if (user) {
+    return next(new ErrorHandler("Email đã được đăng kí!", 400));
+  }
+  user = await User.findOne({ nic });
+  if (user) {
+    return next(new ErrorHandler("CCCD đã tồn tại!", 400));
+  }
   if (password !== confirmPassword) {
     return next(new ErrorHandler("Mật khẩu không trùng khớp!", 400));
-  }
-  if (user) {
-    return next(new ErrorHandler("Người dùng đã được đăng kí!", 400));
   }
 
   // Tạo người dùng mới

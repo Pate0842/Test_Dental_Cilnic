@@ -1,6 +1,32 @@
 import mongoose from "mongoose";
 import validator from "validator";
 
+// Các đầu số hợp lệ cho phone
+const validPrefixes = [
+  "032", "033", "034", "035", "036", "037", "038", "039", // Viettel
+  "096", "097", "098", "086", // Viettel
+  "083", "084", "085", "081", "082", "088", // Vinaphone
+  "091", "094", // Vinaphone
+  "070", "079", "077", "076", "078", // Mobifone
+  "090", "093", // Mobifone
+  "089", // Mobifone
+  "056", "058", // Vietnamobile
+  "092", // Vietnamobile
+  "059", // Gmobile
+  "099" // Gmobile
+];
+
+// Các mã tỉnh hợp lệ cho CCCD
+const validProvinces = [
+  "001", "002", "004", "006", "008", "010", "011", "012", "014", "015",
+  "017", "019", "020", "022", "024", "025", "026", "027", "030", "031",
+  "033", "034", "035", "036", "037", "038", "040", "042", "044", "045",
+  "046", "048", "049", "051", "052", "054", "056", "058", "060", "062",
+  "064", "066", "067", "068", "070", "072", "074", "075", "077", "079",
+  "080", "082", "083", "084", "086", "087", "089", "091", "092", "093",
+  "094", "095", "096"
+];
+
 const appointmentSchema = new mongoose.Schema({
   lastName: {
     type: String,
@@ -20,18 +46,82 @@ const appointmentSchema = new mongoose.Schema({
   phone: {
     type: String,
     required: [true, "Số Điện Thoại Là Bắt Buộc!"],
-    minLength: [10, "Số Điện Thoại Phải Có Đúng 10 Ký Tự!"],
-    maxLength: [10, "Số Điện Thoại Phải Có Đúng 10 Ký Tự!"],
+    validate: {
+      validator: function (value) {
+        if (value.length !== 10) {
+          return false;
+        }
+        const prefix = value.substring(0, 3);
+        return validPrefixes.includes(prefix);
+      },
+      message: "Số điện thoại không hợp lệ!",
+    },
   },
   cccd: {
     type: String,
     required: [true, "Số CCCD Là Bắt Buộc!"],
-    minLength: [12, "Số CCCD Phải Có Đúng 12 Ký Tự!"],
-    maxLength: [12, "Số CCCD Phải Có Đúng 12 Ký Tự!"],
+    validate: {
+      validator: function (cccd) {
+        const dob = this.dob;
+        const gender = this.gender;
+
+        if (cccd.length !== 12) {
+          throw new Error("Số CCCD phải chứa đúng 12 ký tự!");
+        }
+
+        const provinceCode = cccd.substring(0, 3);
+        const genderCode = cccd[3];
+        const birthYearCode = cccd.substring(4, 6);
+        const randomDigits = cccd.substring(6);
+
+        // Kiểm tra mã tỉnh
+        if (!validProvinces.includes(provinceCode)) {
+          throw new Error("Mã tỉnh không hợp lệ!");
+        }
+
+        // Kiểm tra mã giới tính và thế kỷ sinh
+        const birthYear = dob.getFullYear();
+        const birthCentury = Math.floor((birthYear - 1) / 100) + 1;
+
+        const genderCenturyMap = {
+          "20": { male: "0", female: "1" },
+          "21": { male: "2", female: "3" },
+          "22": { male: "4", female: "5" },
+          "23": { male: "6", female: "7" },
+        };
+
+        const centuryKey = birthCentury.toString();
+        if (
+          !genderCenturyMap[centuryKey] ||
+          genderCenturyMap[centuryKey][gender === "Nam" ? "male" : "female"] !== genderCode
+        ) {
+          throw new Error("Mã giới tính hoặc thế kỷ sinh không hợp lệ!");
+        }
+
+        // Kiểm tra mã năm sinh
+        if (birthYear.toString().slice(-2) !== birthYearCode) {
+          throw new Error("Mã năm sinh không khớp với ngày sinh!");
+        }
+
+        // Kiểm tra 6 số ngẫu nhiên cuối
+        if (!/^\d{6}$/.test(randomDigits)) {
+          throw new Error("6 ký tự cuối của CCCD phải là số!");
+        }
+
+        return true;
+      },
+      message: "Số CCCD không hợp lệ!",
+    },
   },
   dob: {
     type: Date,
     required: [true, "Ngày Sinh Là Bắt Buộc!"],
+    validate: {
+      validator: function (value) {
+        return value <= new Date();
+      },
+      message: "Ngày sinh không hợp lệ!",
+    },
   },
   gender: {
     type: String,
