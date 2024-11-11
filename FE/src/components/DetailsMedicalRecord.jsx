@@ -88,7 +88,7 @@ const DetailsMedicalRecord = () => {
       <table>
         <tbody>
           <tr>
-            <th>Họ Tên Bác Sĩ</th>
+            <th style={{width:324}}>Họ Tên Bác Sĩ</th>
             <td>{medicalRecord?.doctor?.firstName && medicalRecord?.doctor?.lastName ? 
                   `${medicalRecord.doctor.firstName} ${medicalRecord.doctor.lastName}` : "N/A"}
             </td>
@@ -104,7 +104,7 @@ const DetailsMedicalRecord = () => {
       <table>
         <tbody>
           <tr>
-            <th>Ngày Khám</th>
+            <th style={{width:326}}>Ngày Khám</th>
             <td>{medicalRecord ? new Date(medicalRecord.examinationDate).toLocaleDateString("vi-VN") : "N/A"}</td>
           </tr>
           <tr>

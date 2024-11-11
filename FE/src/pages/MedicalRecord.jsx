@@ -58,7 +58,7 @@ const MedicalRecordStatus = () => {
                     onClick={() => handleIdClick(record._id)}
                     className="hover:bg-gray-100 cursor-pointer"
                   >
-                    <td className="p-2 border text-blue-600">{record._id}</td>
+                    <td className="p-2 border text-blue-600 record-id">{record._id}</td>
                     <td className="p-2 border">
                       {new Date(record.examinationDate).toLocaleDateString()}
                     </td>

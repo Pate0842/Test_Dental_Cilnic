@@ -66,8 +66,8 @@ const Profile = () => {
       console.log("Updated user from server:", res.data.updatedUser);
   
       // Cập nhật user trong context
-      if (res.data.updatedUser) {
-        setUser(res.data.updatedUser);  // Cập nhật thông tin người dùng trong context
+      if (res.data.updateUser) {
+        setUser(res.data.updateUser);  // Cập nhật thông tin người dùng trong context
       } else {
         console.error("Không có dữ liệu updatedUser từ server");
       }
@@ -96,93 +96,90 @@ const Profile = () => {
     <div className="page-content">
       <section className="Profile page">
         <div className="img-container">
-          <img src="/thay-ba-1.jpg" alt="Profile" />
-          <div className="text-profile">
-            Chào mừng bạn đến với Bệnh viện Nha khoa của chúng tôi, nơi chúng tôi cam kết mang đến sự chăm sóc toàn diện và tận tâm nhất cho nụ cười của bạn. Với đội ngũ bác sĩ giàu kinh nghiệm, trang thiết bị hiện đại và công nghệ tiên tiến, chúng tôi cung cấp đa dạng dịch vụ từ cạo vôi, trám răng đến chỉnh nha, trồng răng implant. Sức khỏe và sự hài lòng của bạn là ưu tiên hàng đầu, và chúng tôi luôn tạo ra môi trường thân thiện, thoải mái để bạn cảm thấy an tâm trong suốt quá trình điều trị. Hãy để chúng tôi đồng hành cùng bạn trong hành trình bảo vệ và nâng tầm nụ cười của bạn!
-          </div>
+          <img src="/image.png" alt="Profile" />
         </div>
         <div className="bannerstatus">
           <h5>Thông Tin Cá Nhân</h5>
           <form>
-            <div className="form-group">
-              <label>Họ và Tên:</label>
-              <input
-                type="text"
-                name="firstName"
-                value={profileData.firstName || ""}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
-              <input
-                type="text"
-                name="lastName"
-                value={profileData.lastName || ""}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="form-group">
-              <label>Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={profileData.email || ""}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="form-group">
-              <label>Số Điện Thoại:</label>
-              <input
-                type="tel"
-                name="phone"
-                value={profileData.phone || ""}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="form-group">
-              <label>CCCD:</label>
-              <input
-                type="text"
-                name="nic"
-                value={profileData.nic || ""}
-                disabled
-              />
-            </div>
-            <div className="form-group">
-              <label>Ngày/Tháng/Năm:</label>
-              <input
-                type="date"
-                name="dob"
-                value={profileData.dob || ""}
-                onChange={handleChange}
-                disabled={!isEditing}
-              />
-            </div>
-            <div className="form-group">
-              <label>Giới Tính:</label>
-              <select
-                name="gender"
-                value={profileData.gender || ""}
-                onChange={handleChange}
-                disabled={!isEditing}
-              >
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-              </select>
-            </div>
-            <div className="form-actions">
-              {isEditing ? (
-                <>
-                  <button type="button" onClick={handleCancel}>Hủy</button>
-                  <button type="button" onClick={handleSave}>Lưu</button>
-                </>
-              ) : (
-                <button type="button" onClick={handleEditToggle}>Chỉnh sửa</button>
-              )}
-            </div>
-          </form>
+  <div className="form-group">
+    <label>Họ và Tên:</label>
+    <input
+      type="text"
+      name="firstName"
+      value={profileData.firstName || ""}
+      onChange={handleChange}
+      disabled={!isEditing}
+    />
+    <input
+      type="text"
+      name="lastName"
+      value={profileData.lastName || ""}
+      onChange={handleChange}
+      disabled={!isEditing}
+    />
+  </div>
+  <div className="form-group">
+    <label>Email:</label>
+    <input
+      type="email"
+      name="email"
+      value={profileData.email || ""}
+      onChange={handleChange}
+      disabled={true}  // Email không thể chỉnh sửa
+    />
+  </div>
+  <div className="form-group">
+    <label>Số Điện Thoại:</label>
+    <input
+      type="tel"
+      name="phone"
+      value={profileData.phone || ""}
+      onChange={handleChange}
+      disabled={!isEditing}
+    />
+  </div>
+  <div className="form-group">
+    <label>CCCD:</label>
+    <input
+      type="text"
+      name="nic"
+      value={profileData.nic || ""}
+      disabled={true}  // CCCD không thể chỉnh sửa
+    />
+  </div>
+  <div className="form-group">
+    <label>Ngày/Tháng/Năm:</label>
+    <input
+      type="date"
+      name="dob"
+      value={profileData.dob || ""}
+      onChange={handleChange}
+      disabled={true}  // Ngày tháng năm không thể chỉnh sửa
+    />
+  </div>
+  <div className="form-group">
+    <label>Giới Tính:</label>
+    <select
+      name="gender"
+      value={profileData.gender || ""}
+      onChange={handleChange}
+      disabled={true}  // Giới tính không thể chỉnh sửa
+    >
+      <option value="Nam">Nam</option>
+      <option value="Nữ">Nữ</option>
+    </select>
+  </div>
+  <div className="form-actions">
+    {isEditing ? (
+      <>
+        <button type="button" onClick={handleCancel}>Hủy</button>
+        <button type="button" onClick={handleSave}>Lưu</button>
+      </>
+    ) : (
+      <button type="button" onClick={handleEditToggle}>Chỉnh sửa</button>
+    )}
+  </div>
+</form>
         </div>
       </section>
     </div>

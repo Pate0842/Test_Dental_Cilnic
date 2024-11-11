@@ -49,11 +49,24 @@ const AppointmentStatus = () => {
               ) : (
                 appointments.map((appointment) => (
                   <tr key={appointment._id}>
-                    <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
+                    <td className="name-column">{`${appointment.firstName} ${appointment.lastName}`}</td>
                     <td>{new Date(appointment.appointment_date).toLocaleDateString()}</td>
                     <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>
                     <td>{appointment.department}</td>
-                    <td>{appointment.status || "Đang chờ"}</td> {/* Mặc định là "Đang chờ" nếu không có trạng thái */}
+                    <td
+            style={{
+              color:
+                appointment.status === "Đang Chờ"
+                  ? "orange"
+                  : appointment.status === "Đã Chấp Nhận"
+                  ? "green"
+                  : appointment.status === "Đã Từ Chối"
+                  ? "red"
+                  : "black", // màu mặc định nếu không có trạng thái
+            }}
+          >
+            {appointment.status || "Đang chờ"}
+          </td>
                   </tr>
                 ))
               )}

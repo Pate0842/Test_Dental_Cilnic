@@ -198,13 +198,6 @@ const AppointmentForm = () => {
               flexDirection: "row",
             }}
           >
-            <p style={{ marginBottom: 0 }}>Bạn đã dặt bao giờ chưa</p>
-            <input
-              type="checkbox"
-              checked={hasVisited}
-              onChange={(e) => setHasVisited(e.target.checked)}
-              style={{ flex: "none", width: "25px" }}
-            />
           </div>
           <button style={{ margin: "0 auto" }}>Đặt lịch</button>
         </form>

@@ -187,7 +187,7 @@ h6 {
   margin-bottom: 20px;
   font-family: "Roboto", sans-serif;
   text-align: center;
-  margin-left: 35px;
+  margin-left: 101px;
 }
 .form-component form {
   display: flex;
@@ -207,6 +207,11 @@ h6 {
   border-radius: 7px;
   border: 1px solid gray;
 }
+.form-component form .confirm-password {
+  width: 300px !important; /* Đảm bảo thay đổi được áp dụng */
+}
+
+
 .form-component button {
   padding: 10px 35px;
   color: #fff;
@@ -613,7 +618,7 @@ nav .dropdown {
   top: 98px; /* Tăng giá trị này để dropdown hiển thị phía dưới */
   width: 320px;
   left: 0; 
-  margin-left: 83.3%;
+  margin-left: 81.6%;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -700,6 +705,7 @@ footer .logo-img{
   height: 700px; 
   font-size: 14px;
   flex-wrap: wrap; 
+  margin-left: 30px;
 }
 .text-profile {
   font-size: 1.2rem; /* Kích thước font */
@@ -797,7 +803,7 @@ form {
 /* CSS cho nút Hủy */
 .form-actions button:nth-child(2) {
   background-color: #007bff;
-  margin-left: 680px; /* Màu cam cho nút Hủy */
+  margin-left: 610px; /* Màu cam cho nút Hủy */
 }
 
 .form-actions button:nth-child(2):hover {
@@ -821,7 +827,7 @@ form {
   margin-bottom: 20px;
   width: 80%;
   height: auto;
-  margin-left: 174px;
+  margin-left: 100px;
   background: linear-gradient(to right bottom, #ffffff, #f8f9fa); /* Gradient nhẹ */
 }
 
@@ -830,8 +836,12 @@ form {
   font-weight: 600;
   color: #000000;
   margin-bottom: 20px;
-text-align: left;
+  text-align: center;
 }
+.name-column {
+  font-weight: 550; /* Đặt chữ in đậm */
+}
+
 
 .bannerstatus table {
   width: 100%;
@@ -1015,7 +1025,8 @@ text-align: left;
   color: #333;
 }
 .medical-record-details h3 {
-  margin-left: 120px;
+  margin-left: 63px;
+  padding-top: 15px;
 }
 
 
@@ -1045,6 +1056,7 @@ text-align: left;
   color: #333;
   font-weight: bold;
   font-size: 18px;
+  
 }
 
 .medical-record-details td {
@@ -1079,3 +1091,7 @@ text-align: left;
   font-size: 20px; /* Tăng kích thước chữ cho phần sau dấu ":" */
   font-weight: normal;
 }
+.record-id {
+  font-weight: 480;
+}
+
