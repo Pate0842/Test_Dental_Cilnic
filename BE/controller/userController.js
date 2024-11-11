@@ -371,18 +371,18 @@ export const updateDoctorHandler = catchAsyncErrors(async (req, res, next) => {
       gender,
       dob,
       nic,
-      doctorDepartment,
+      doctorDepartment
     } = req.body;
 
-    // Check for required fields
+    // Kiểm tra các trường bắt buộc
     if (!firstName || !lastName || !email || !phone || !gender || !dob || !nic || !doctorDepartment) {
       return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
     }
 
-    // Update the doctor information
+    // Cập nhật thông tin bác sĩ
     Object.assign(doctor, { firstName, lastName, email, phone, gender, dob, nic, doctorDepartment });
 
-    // Handle new avatar upload
+    // Xử lý avatar mới nếu có
     if (req.files && req.files.docAvatar) {
       const { docAvatar } = req.files;
       const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
@@ -485,7 +485,7 @@ export const updatePatientHandler = catchAsyncErrors(async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Cập nhật tài khoản bệnh nhân thành công!",
-      patient,
+      updateUser: patient,
     });
   } catch (error) {
     console.error("Lỗi khi cập nhật tài khoản bệnh nhân:", error);

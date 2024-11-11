@@ -17,7 +17,7 @@ const UpdatePatient = () => {
   const [nic, setNic] = useState(patient?.nic || "");
   const [dob, setDob] = useState(patient?.dob ? new Date(patient.dob).toISOString().substring(0, 10) : "");
   const [gender, setGender] = useState(patient?.gender || "");
-  const [password, setPassword] = useState("");
+
 
 
   const handleUpdatePatient = async (e) => {
@@ -32,7 +32,7 @@ const UpdatePatient = () => {
       formData.append("dob", dob);
       formData.append("gender", gender);
 
-      if (password) formData.append("password", password);
+
 
       await axios.put(`http://localhost:4000/api/v1/user/patients/update/${patient._id}`, formData, {
         withCredentials: true,
@@ -73,7 +73,6 @@ const UpdatePatient = () => {
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
               </select>
-              <input type="password" placeholder="Password (Nếu muốn đổi)" value={password} onChange={(e) => setPassword(e.target.value)} />
               <button type="submit">Cập nhật</button>
             </div>
           </div>

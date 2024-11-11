@@ -17,38 +17,42 @@ const Dashboard = () => {
           "http://localhost:4000/api/v1/appointment/getallDoctor",
           { withCredentials: true }
         );
-
-
-        // Lọc các cuộc hẹn đã chấp nhận và là của bác sĩ hiện tại
-        const approvedAppointments = data.appointments.filter(
-          (appointment) => appointment.status === "Đã Chấp Nhận" && appointment.doctorId === doctor._id
+  
+        // Lọc các cuộc hẹn thuộc về bác sĩ hiện tại
+        const doctorAppointments = data.appointments.filter(
+          (appointment) => appointment.doctorId === doctor._id
         );
-        
+  
+        // Đếm tổng số cuộc hẹn của bác sĩ hiện tại
+        setTotalAppointments(doctorAppointments.length);
+  
+        // Lọc các cuộc hẹn đã chấp nhận, chưa được xử lý và là của bác sĩ hiện tại
+        const approvedAppointments = doctorAppointments.filter(
+          (appointment) =>
+            appointment.status === "Đã Chấp Nhận" && !appointment.isProcessed
+        );
+  
         // Lọc các cuộc hẹn trong ngày hôm nay
         const today = new Date().toISOString().split("T")[0];
-        const todayAppointments = approvedAppointments.filter(
-          (appointment) => appointment.appointment_date.startsWith(today)
+        const todayAppointments = approvedAppointments.filter((appointment) =>
+          appointment.appointment_date.startsWith(today)
         );
-        
+  
+        // Cập nhật danh sách cuộc hẹn hôm nay
         setAppointments(todayAppointments);
-
-        // Hiển thị tổng số cuộc hẹn của bác sĩ
-        const totalAppointments = approvedAppointments.length;
-        setTotalAppointments(totalAppointments);
-
       } catch {
         setAppointments([]);
         setTotalAppointments(0);
       }
     };
-
+  
     if (doctor) {
       fetchAppointments();
     }
   }, [doctor]);
+  
 
   const handleCreateMedicalRecord = (appointmentId) => {
-    
     navigate(`/createMedicalRecord/${appointmentId}`);
   };
 

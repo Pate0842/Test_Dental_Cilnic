@@ -1,17 +1,21 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Context } from "../main";
 
 const CreateMedicalRecord = () => {
   const { appointmentId } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(Context);
 
   const [appointment, setAppointment] = useState(null);
   const [prescriptions, setPrescriptions] = useState([{ name: "", quantity: 1, unit: "", usage: "" }]);
   const [suggestions, setSuggestions] = useState([]);
   const [focusedRow, setFocusedRow] = useState(null); // Track which row is focused
   const limitedSuggestions = suggestions.slice(0, 100);
+  const { state } = useLocation();  // Lấy dữ liệu setAppointments từ Dashboard
+  const { setAppointments } = state || {};  // Gán setAppointments nếu có
 
   const medicines = [
     { name: "Paracetamol", unit: "Viên", usage: "Tối 1 sáng 1" },
@@ -20,7 +24,6 @@ const CreateMedicalRecord = () => {
     { name: "Vitamin C", unit: "Viên", usage: "Tối 1 sáng 1" },
     { name: "Amoxicillin", unit: "Viên", usage: "Tối 1 sáng 1" },
   ];
-  
 
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -60,17 +63,25 @@ const CreateMedicalRecord = () => {
   
     try {
       const response = await axios.post("http://localhost:4000/api/v1/medicalRecord/post", medicalRecord, {
-        withCredentials: true, 
+        withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
   
       if (response.data.success) {
         toast.success("Đơn thuốc đã được tạo thành công!");
-        navigate("/"); // Điều hướng sau khi thành công
+  
+        // Update the appointments list in Dashboard after success
+        if (setAppointments) {
+          setAppointments((prevAppointments) =>
+            prevAppointments.filter((appointment) => appointment._id !== appointmentId)
+          );
+        }
+  
+        navigate("/"); // Navigate after success
       }
     } catch (error) {
       toast.error("Đã có lỗi khi tạo đơn thuốc.");
-      console.error("Error:", error); // Xem lỗi chi tiết
+      console.error("Error:", error);
     }
   };
 
@@ -98,7 +109,7 @@ const CreateMedicalRecord = () => {
     updatedPrescriptions[index].unit = medicine.unit;
     setPrescriptions(updatedPrescriptions);
     setSuggestions([]);
-    setFocusedRow(null); // Clear focused row after selecting suggestion
+    setFocusedRow(null);
   };
 
   const addPrescription = () => {
@@ -235,7 +246,10 @@ const CreateMedicalRecord = () => {
                 <button type="button" onClick={addPrescription}>
                   Thêm thuốc
                 </button>
-                <button type="submit">Cập nhật</button>
+
+                <button type="submit" className="submit">
+                  Cập nhật đơn thuốc
+                </button>
               </div>
             </div>
           </form>

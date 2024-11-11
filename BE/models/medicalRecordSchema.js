@@ -1,6 +1,16 @@
 import mongoose from "mongoose";
 
 const medicalRecordSchema = new mongoose.Schema({
+  patientId: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  appointmentId: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Appointment",
+    required: true,
+  },
   examinationDate: {
     type: Date,
     required: [true, "Ngày khám là bắt buộc!"],
@@ -50,12 +60,7 @@ const medicalRecordSchema = new mongoose.Schema({
         required: [true, "Cách dùng là bắt buộc!"],
       },
     },
-  ],
-  appointmentId: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Appointment",
-    required: true,
-  },
+  ], 
 });
 
 export const MedicalRecord = mongoose.model("MedicalRecord", medicalRecordSchema);

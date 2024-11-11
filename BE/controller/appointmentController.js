@@ -4,81 +4,91 @@ import { Appointment } from "../models/appointmentSchema.js";
 import { User } from "../models/userSchema.js";
 
 export const postAppointment = catchAsyncErrors(async (req, res, next) => {
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      cccd,
-      dob,
-      gender,
-      appointment_date,
-      department,
-      doctor_firstName,
-      doctor_lastName,
-      hasVisited,
-      address
-    } = req.body;
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phone ||
-      !cccd ||
-      !dob ||
-      !gender ||
-      !appointment_date ||
-      !department ||
-      !doctor_firstName ||
-      !doctor_lastName ||
-      !address
-    ) {
-      return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
-    }
-    const isConflict = await User.find({
-        firstName: doctor_firstName,
-        lastName: doctor_lastName,
-        role: "Bác sĩ",
-        doctorDepartment: department,
-    });
-    if (isConflict.length === 0) {
-        return next(new ErrorHandler("Không tìm thấy bác sĩ", 404));
-    }
-    
-    if (isConflict.length > 1) {
-        return next(
-          new ErrorHandler(
-            "Bác sĩ đang bận! Vui lòng liên hệ qua email hoặc điện thoại!",
-            400
-          )
-        );
-    }
-    const doctorId = isConflict[0]._id;
-    const patientId = req.user._id;
-    const appointment = await Appointment.create({
-        firstName,
-        lastName,
-        email,
-        phone,
-        cccd,
-        dob,
-        gender,
-        appointment_date,
-        department,
-        doctor: {
-          lastName: doctor_lastName,
-          firstName: doctor_firstName,
-        },
-        hasVisited,
-        address,
-        doctorId,
-        patientId,
-    });
-    res.status(200).json({
-        success: true,
-        message: "Lịch hẹn đã được gửi thành công!",
-        appointment
-    });
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    cccd,
+    dob,
+    gender,
+    appointment_date,
+    department,
+    doctor_firstName,
+    doctor_lastName,
+    hasVisited,
+    address,
+  } = req.body;
+
+  // Check for missing fields
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !phone ||
+    !cccd ||
+    !dob ||
+    !gender ||
+    !appointment_date ||
+    !department ||
+    !doctor_firstName ||
+    !doctor_lastName ||
+    !address
+  ) {
+    return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
+  }
+
+  // Check if doctor exists and is available
+  const isConflict = await User.find({
+    firstName: doctor_firstName,
+    lastName: doctor_lastName,
+    role: "Bác sĩ",
+    doctorDepartment: department,
+  });
+
+  if (isConflict.length === 0) {
+    return next(new ErrorHandler("Không tìm thấy bác sĩ", 404));
+  }
+
+  if (isConflict.length > 1) {
+    return next(
+      new ErrorHandler(
+        "Bác sĩ đang bận! Vui lòng liên hệ qua email hoặc điện thoại!",
+        400
+      )
+    );
+  }
+
+  // Get the doctor's ID from the found conflict
+  const doctorId = isConflict[0]._id;
+  const patientId = req.user._id;
+
+  // Create the appointment and set isProcessed to false by default
+  const appointment = await Appointment.create({
+    firstName,
+    lastName,
+    email,
+    phone,
+    cccd,
+    dob,
+    gender,
+    appointment_date,
+    department,
+    doctor: {
+      lastName: doctor_lastName,
+      firstName: doctor_firstName,
+    },
+    hasVisited,
+    address,
+    doctorId,
+    patientId,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Lịch hẹn đã được gửi thành công!",
+    appointment,
+  });
 });
 
 export const getAllAppointments = catchAsyncErrors(async (req, res, next) => {
@@ -152,6 +162,14 @@ export const updateAppointmentStatus = catchAsyncErrors(
         return res.status(404).json({
           success: false,
           message: "Không tìm thấy cuộc hẹn.",
+        });
+      }
+  
+      // Kiểm tra nếu cuộc hẹn đã được xử lý
+      if (appointment.isProcessed) {
+        return res.status(400).json({
+          success: false,
+          message: "Cuộc hẹn này đã được xử lý.",
         });
       }
   

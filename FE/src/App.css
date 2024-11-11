@@ -33,7 +33,7 @@ a {
     font-size: 21px;
     font-weight: 600;
     letter-spacing: 1.4px;
-    text-align: center;
+    text-align: start;
 
 }
 
@@ -108,6 +108,7 @@ h6 {
 .hero .banner p {
   color: #111;
   letter-spacing: 2px;
+  text-align: start;
 }
 .hero .banner span {
   position: absolute;
@@ -305,6 +306,7 @@ h6 {
   font-size: 24px;
   letter-spacing: 2px;
   margin: 0;
+  text-align: start;
 }
 @media (max-width: 925px) {
   .biography {
@@ -468,10 +470,10 @@ nav {
   align-items: center;
   border-bottom-right-radius: 7px;
   border-bottom-left-radius: 7px;
-  padding-top: 20px !important;
-  padding-bottom: 80px !important; /* Tăng padding-bottom để kéo dài phần đáy */
+  padding-bottom: 50px !important; /* Tăng padding-bottom để kéo dài phần đáy */
   z-index: 2;
-  height: 200px;
+  height: 220px;
+
 }
 
 nav .logo {
@@ -608,18 +610,21 @@ nav svg {
 }
 nav .dropdown {
   position: absolute;
-  top: 85px;
+  top: 98px; /* Tăng giá trị này để dropdown hiển thị phía dưới */
   width: 320px;
+  left: 0; 
+  margin-left: 83.3%;
   display: flex;
   flex-direction: column;
-  gap: 0; /* Giảm khoảng cách giữa các phần tử xuống 0 */
-  overflow: visible; /* Thêm background trắng cho dropdown */
+  gap: 0;
+  overflow: visible;
+  z-index: 999; /* Đảm bảo dropdown luôn nằm trên các phần tử khác */ /* Giữ chiều cao tự động */
 }
 
 /* Style cho cả link và button trong dropdown */
 nav .dropdown a {
   font-size: 19px;
-  padding: 5px; /* Thêm padding để tạo không gian click */
+  padding: 3px;
   text-decoration: none;
   color: #222;
   border-radius: 100px;
@@ -645,7 +650,7 @@ nav .dropdown .logoutBtn {
 nav .dropdown a:hover,
 nav .dropdown .logoutBtn:hover {
   background-color: #f5f5f5;
-  width: auto;
+  width: 227px;
 }
 
 input[type="date"]:before {
@@ -668,191 +673,144 @@ footer .logo-img{
   padding-top: 11%; /* Khoảng cách từ Navbar */
   padding-bottom: 30px; /* Khoảng cách từ Footer */
 }
-/* Profile.css */
-.profile-page {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.profile-page h2 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.profile-page p {
-  text-align: start;
-  margin-bottom: 20px;
-  font-size: 16px;
-  line-height: 1.5;
-  position:relative;
-  flex-direction: column; 
-}
-
-.profile-page p:before {
-  content: attr(data-label);
-  width: 200px; /* Increased width for labels */
-  font-weight: 500;
-  color: #666;
-  text-align: right; /* Right align labels */
-  padding-right: 20px; /* Add padding between label and input */
-}
-
-.profile-page input,
-.profile-page select {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #333;
-  background-color: #fff;
-  margin-left: 20px; /* Add consistent left margin for inputs */
-  width: auto; /* Fixed width for inputs */
-}
-
-.profile-page input[type="date"] {
-  padding: 7px 12px;
-}
-
-.profile-page input:read-only {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-}
-
-/* Specific styling for first name and last name inputs */
-.profile-page p.name-field {
-  display: flex;
-  align-items: center;
-}
-
-.profile-page p.name-field:before {
-  margin-right: 20px;
-}
-
-.profile-page input[name="firstName"],
-.profile-page input[name="lastName"] {
-  width: 190px; /* Adjusted width for name inputs */
-  margin: 0;
-}
-
-.profile-page input[name="firstName"] {
-  margin-right: 20px;
-  margin-left: 20px;
-}
-
-/* Button styling */
-.button-container {
+.page-content {
   display: flex;
   justify-content: center;
-  gap: 200px; /* Large gap between buttons */
-  margin-top: 30px;
-  padding: 0 100px; /* Add padding to maintain button positions */
+  align-items: center;
+  min-height: auto;
+  background-color: #F0F0F0;
 }
 
-.profile-page button {
-  padding: 10px 40px;
-  border: none;
-  border-radius: 6px;
+.Profile.page {
+  width: 100%;
+  max-width: 90%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  display: flex; /* Thêm display: flex; để có thể sử dụng flex-direction */
+  flex-direction: row; /* Thêm flex-direction: row; để đặt hình ảnh và form ngang nhau */
+  align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.Profile.page .img-container {
+  flex-basis: 30%; /* Chiếm 30% chiều rộng của container */
+  display: flex;
+  justify-content: center;
+  height: 700px; 
   font-size: 14px;
+  flex-wrap: wrap; 
+}
+.text-profile {
+  font-size: 1.2rem; /* Kích thước font */
+  line-height: 1.4; /* Khoảng cách giữa các dòng */
+  color: #333; /* Màu chữ */
+  font-family: "Roboto", sans-serif;/* Phông chữ */
+  text-align: start; /* Căn giữa văn bản */
+  padding: 20px; /* Khoảng cách trong giữa nội dung và viền */
+  border-radius: 8px; /* Bo góc cho nền */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ xung quanh */
+  max-width: 800px; /* Chiều rộng tối đa */
+  margin: 0 auto; /* Căn giữa theo chiều ngang */
+}
+
+.text-profile p {
+  margin: 0; /* Loại bỏ khoảng cách mặc định của thẻ p */
+}
+
+
+.Profile.page .img-container img {
+  max-width: 70%;
+  height: 200px;
+  border-radius: 50%; /* Làm tròn ảnh */
+}
+
+.Profile.page .form-container {
+  flex-basis: 70%; /* Chiếm 70% chiều rộng của container */
+}
+
+/* Giữ lại các styles cho form như cũ */
+.bannerstatus h5 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
   font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease-in-out;
+  color: #000000;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Các nút trong form-actions */
+.form-actions button {
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #007bff; /* Màu xanh cho nút Lưu */
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 120px; /* Minimum width for buttons */
+  transition: background-color 0.2s ease-in-out;
+  margin-right: 18px;
 }
 
-.profile-page button:first-of-type {
-  background-color: #4CAF50;
-  color: white;
-  margin-left: 30px;
+.form-actions button:hover {
+  background-color: #007bff; /* Màu xanh đậm khi hover */
 }
 
-.profile-page button:first-of-type:hover {
-  background-color: #45a049;
+/* CSS cho nút Hủy */
+.form-actions button:nth-child(2) {
+  background-color: #007bff;
+  margin-left: 680px; /* Màu cam cho nút Hủy */
 }
 
-.profile-page button:last-of-type {
-  background-color: #f44336;
-  color: white;
-  margin-left: 240px;
+.form-actions button:nth-child(2):hover {
+  background-color: #007bff; /* Màu cam đậm khi hover */
 }
 
-.profile-page button:last-of-type:hover {
-  background-color: #da190b;
-}
-
-.profile-page button:only-of-type {
-  background-color: #2196F3;
-  color: white;
-  margin-left: 190px;
-}
-
-.profile-page button:only-of-type:hover {
-  background-color: #0b7dda;
-}
-
-/* Container styling */
-.content-container {
-  min-height: calc(100vh - 200px);
-  padding: 80px 20px;
-  background-color: #f5f7fa;
-}
-
-/* Responsive adjustments */
-@media (max-width: 800px) {
-  .profile-page {
-    max-width: 100%;
-    margin: 20px;
-    padding: 20px;
-  }
-  
-  .profile-page p {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .profile-page p:before {
-    width: 100%;
-    text-align: left;
-    margin-bottom: 5px;
-  }
-  
-  .profile-page input,
-  .profile-page select {
-    width: 100%;
-    margin-left: 0;
-  }
-  
-  .profile-page input[name="firstName"],
-  .profile-page input[name="lastName"] {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 10px;
-    
-  }
-  
-  .button-container {
-    flex-direction: column;
-    gap: 10px;
-    padding: 0;
-  }
-  
-  .profile-page button {
-    width: 100%;
-  }
-}
 
 /* AppointmentStatus.css */
 
 
 .AppointmentStatus.page {
   width: 100%;
+  height: auto;
 }
 
 .bannerstatus {
@@ -863,17 +821,16 @@ footer .logo-img{
   margin-bottom: 20px;
   width: 80%;
   height: auto;
-  margin: 0 auto;
+  margin-left: 174px;
   background: linear-gradient(to right bottom, #ffffff, #f8f9fa); /* Gradient nhẹ */
 }
 
 .bannerstatus h5 {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   font-weight: 600;
   color: #000000;
   margin-bottom: 20px;
-text-align: center;
-margin-left: 30px;
+text-align: left;
 }
 
 .bannerstatus table {
@@ -927,4 +884,198 @@ margin-left: 30px;
   color: #f44336;
   font-size: 1.2rem;
 }
+.verification-success-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  max-height: 50%;
+  background-color: #F0F0F0;
+}
 
+.message-box {
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 50px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 500px;
+}
+
+.message-box h1 {
+  font-size: 2rem;
+  color: #007bff;
+}
+
+.message-box p {
+  font-size: 1.2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom:70px ;
+}
+.verification-image {
+  width: 65%;  /* Điều chỉnh kích thước theo ý muốn */
+  max-width: 250px;  /* Giới hạn kích thước lớn nhất */
+  height: auto;
+}
+
+.btn-login {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.btn-login:hover {
+  background-color: #044994;
+}
+/* Banner Style for MedicalRecordStatus */
+.MedicalRecord-bannerstatus {
+  background-color: #e3f2fd;
+  padding: 20px;
+  margin: 20px auto; /* Thêm margin auto để căn giữa */
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 800px; /* Thiết lập chiều rộng tối thiểu */
+  width: 70%; /* Chiếm 80% chiều rộng của container cha */
+  max-width: 1400px; /* Giới hạn chiều rộng tối đa */
+}
+
+.MedicalRecord-bannerstatus h5 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.MedicalRecord-bannerstatus table {
+  width: 100%; /* Bảng sẽ lấp đầy toàn bộ chiều rộng của banner */
+  margin: 0 auto;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: fixed; /* Giúp các cột có chiều rộng đồng đều */
+}
+
+.MedicalRecord-bannerstatus table th,
+.MedicalRecord-bannerstatus table td {
+  padding: 12px 24px; /* Tăng padding ngang để có thêm không gian */
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  white-space: nowrap; /* Ngăn text bị xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Hiển thị dấu ... nếu text quá dài */
+}
+
+.MedicalRecord-bannerstatus table th {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+}
+
+.MedicalRecord-bannerstatus table td {
+  background-color: #f9f9f9;
+}
+
+/* Thêm media query để đảm bảo responsive */
+@media screen and (max-width: 800px) {
+  .MedicalRecord-bannerstatus {
+    min-width: 95%;
+    width: 95%;
+    padding: 10px;
+  }
+  
+  .MedicalRecord-bannerstatus table th,
+  .MedicalRecord-bannerstatus table td {
+    padding: 8px 12px;
+  }
+}
+/**/
+.medical-record-details {
+  font-family: "Roboto", sans-serif;
+  margin: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 170px;
+  margin-bottom: 30px;
+   width: 70%;  /* Điều chỉnh độ rộng bảng (giảm xuống còn 80%) */ /* Giới hạn độ rộng tối đa của bảng */
+   margin-left: 260px;
+}
+
+.medical-record-details h2 {
+  text-align: center;
+  color: #333;
+}
+.medical-record-details h3 {
+  margin-left: 120px;
+}
+
+
+.medical-record-details p {
+  font-size: 14px; /* Giảm kích thước font của các đoạn văn */
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.medical-record-details table {
+  width: 200%;  /* Điều chỉnh độ rộng bảng (giảm xuống còn 80%) */
+  max-width: 900px;  /* Giới hạn độ rộng tối đa của bảng */
+  border-collapse: collapse;
+  margin: 20px auto;  /* Căn giữa bảng với margin tự động */
+}
+
+.medical-record-details th,
+.medical-record-details td {
+  padding: 8px; /* Giảm padding để bảng nhỏ hơn */
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 14px; /* Giảm kích thước font của bảng */
+}
+
+.medical-record-details th {
+  background-color: #f4f4f4;
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.medical-record-details td {
+  background-color: #ffffff;
+  font-size: 18px;
+}
+
+.medical-record-details ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.medical-record-details ul li {
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+.medical-record-details .medicine {
+  font-weight: bold;
+  margin-left: 120px;
+}
+
+@media (max-width: 768px) {
+  .medical-record-details table,
+  .medical-record-details th,
+  .medical-record-details td {
+    font-size: 12px; /* Giảm kích thước font trên thiết bị di động */
+    padding: 6px; /* Giảm padding trên thiết bị di động */
+  }
+}
+.medical-record-details .dosage-info {
+  font-size: 20px; /* Tăng kích thước chữ cho phần sau dấu ":" */
+  font-weight: normal;
+}
