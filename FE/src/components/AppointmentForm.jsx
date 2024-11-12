@@ -41,6 +41,31 @@ const AppointmentForm = () => {
     };
     fetchDoctors();
   }, []);
+
+  const handleDobChange = (e) => {
+    const today = new Date();
+    const selectedDate = new Date(e.target.value);
+    if (selectedDate > today) {
+      setDob(today.toISOString().split("T")[0]); // Đặt thành ngày hôm nay
+      toast.error("Ngày sinh không thể lớn hơn ngày hiện tại. Tự động đặt thành ngày hôm nay.");
+    } else {
+      setDob(e.target.value);
+    }
+  };
+
+  const handleAppointmentDateChange = (e) => {
+    const today = new Date();
+    const selectedDate = new Date(e.target.value);
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      setAppointmentDate("");
+      toast.error("Ngày hẹn phải lớn hơn ngày hôm nay.");
+    } else {
+      setAppointmentDate(e.target.value);
+    }
+  };
+
   const handleAppointment = async (e) => {
     e.preventDefault();
     try {
@@ -68,19 +93,19 @@ const AppointmentForm = () => {
         }
       );
       toast.success(data.message);
-      setFirstName(""),
-        setLastName(""),
-        setEmail(""),
-        setPhone(""),
-        setcccd(""),
-        setDob(""),
-        setGender(""),
-        setAppointmentDate(""),
-        setDepartment(""),
-        setDoctorFirstName(""),
-        setDoctorLastName(""),
-        setHasVisited(""),
-        setAddress("");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setcccd("");
+      setDob("");
+      setGender("");
+      setAppointmentDate("");
+      setDepartment("NHA NHI");
+      setDoctorFirstName("");
+      setDoctorLastName("");
+      setHasVisited(false);
+      setAddress("");
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -130,7 +155,7 @@ const AppointmentForm = () => {
               type="date"
               placeholder="Ngày/Tháng/Năm"
               value={dob}
-              onChange={(e) => setDob(e.target.value)}
+              onChange={handleDobChange}
             />
           </div>
           <div>
@@ -143,7 +168,7 @@ const AppointmentForm = () => {
               type="date"
               placeholder="Ngày Hẹn"
               value={appointmentDate}
-              onChange={(e) => setAppointmentDate(e.target.value)}
+              onChange={handleAppointmentDateChange}
             />
           </div>
           <div>
@@ -155,13 +180,11 @@ const AppointmentForm = () => {
                 setDoctorLastName("");
               }}
             >
-              {departmentsArray.map((depart, index) => {
-                return (
-                  <option value={depart} key={index}>
-                    {depart}
-                  </option>
-                );
-              })}
+              {departmentsArray.map((depart, index) => (
+                <option value={depart} key={index}>
+                  {depart}
+                </option>
+              ))}
             </select>
             <select
               value={`${doctorFirstName} ${doctorLastName}`}
@@ -205,4 +228,5 @@ const AppointmentForm = () => {
     </>
   );
 };
+
 export default AppointmentForm;

@@ -15,15 +15,21 @@ const Dashboard = () => {
           "http://localhost:4000/api/v1/appointment/getall",
           { withCredentials: true }
         );
-
-        // Display all appointments without filtering
-        setAppointments(data.appointments);
+  
+        // Sort appointments by date in descending order (newest first)
+        const sortedAppointments = data.appointments.sort(
+          (a, b) => new Date(b.appointment_date) - new Date(a.appointment_date)
+        );
+        
+        // Display sorted appointments
+        setAppointments(sortedAppointments);
       } catch {
         setAppointments([]);
       }
     };
     fetchAppointments();
   }, []);
+  
 
   useEffect(() => {
     const fetchDoctors = async () => {
