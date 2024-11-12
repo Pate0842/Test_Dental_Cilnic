@@ -111,7 +111,7 @@ const Dashboard = () => {
                       </td>
                     </tr>
                   ))
-                : "No Appointments Found!"}
+                : "Không có lịch khám nào!"}
             </tbody>
           </table>
         </div>

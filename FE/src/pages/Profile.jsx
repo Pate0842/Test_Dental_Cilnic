@@ -96,7 +96,7 @@ const Profile = () => {
     <div className="page-content">
       <section className="Profile page">
         <div className="img-container">
-          <img src="/image.png" alt="Profile" />
+          <img style={{ border: "1px solid #000"}} src="/image.png" alt="Profile" />
         </div>
         <div className="bannerstatus">
           <h5>Thông Tin Cá Nhân</h5>
