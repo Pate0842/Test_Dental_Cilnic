@@ -27,9 +27,7 @@ const MedicalRecordStatus = () => {
         new Date(b.examinationDate) - new Date(a.examinationDate)
       );
       setMedicalRecords(sortedRecords);
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Không thể tải hồ sơ bệnh án!");
-    }
+    } catch (err) {}
   };
 
   const handleIdClick = (recordId) => {
@@ -56,7 +54,7 @@ const MedicalRecordStatus = () => {
                   <tr
                     key={record._id}
                     onClick={() => handleIdClick(record._id)}
-                    className="hover:bg-gray-100 cursor-pointer"
+                    className="hover:bg-gray-100 pointer"
                   >
                     <td className="p-2 border text-blue-600 record-id">{record._id}</td>
                     <td className="p-2 border">

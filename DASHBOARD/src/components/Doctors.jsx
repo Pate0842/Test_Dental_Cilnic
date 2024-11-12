@@ -70,7 +70,7 @@ const Doctors = () => {
                     SDT: <span>{element.phone}</span>
                   </p>
                   <p>
-                    Ngày sinh: <span>{element.dob.substring(0, 10)}</span>
+                    Ngày sinh: <span>{new Date(element.dob).toLocaleDateString("vi-VN")}</span>
                   </p>
                   <p>
                     Chuyên khoa: <span>{element.doctorDepartment}</span>

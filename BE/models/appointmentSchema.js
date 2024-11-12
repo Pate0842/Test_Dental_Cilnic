@@ -131,6 +131,13 @@ const appointmentSchema = new mongoose.Schema({
   appointment_date: {
     type: Date,
     required: [true, "Ngày Hẹn Là Bắt Buộc!"],
+    validate: {
+      validator: function (value) {
+        // Kiểm tra nếu appointment_date lớn hơn hoặc bằng ngày hiện tại
+        return value >= new Date().setHours(0, 0, 0, 0); // Đặt giờ về 0 để so sánh với ngày
+      },
+      message: "Ngày hẹn phải từ hôm nay trở đi!",
+    },
   },
   department: {
     type: String,

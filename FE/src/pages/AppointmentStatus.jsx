@@ -22,7 +22,7 @@ const AppointmentStatus = () => {
       );
       setAppointments(sortedAppointments);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Đã có lỗi xảy ra!");
+
     }
   };
 

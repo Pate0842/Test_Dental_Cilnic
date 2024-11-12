@@ -53,7 +53,7 @@ const DetailsMedicalRecord = () => {
               </tr>
               <tr>
                 <th>Ngày Sinh</th>
-                <td>{appointment.dob}</td>
+                <td>{new Date(appointment.dob).toLocaleDateString("vi-VN")}</td>
               </tr>
               <tr>
                 <th>Giới Tính</th>

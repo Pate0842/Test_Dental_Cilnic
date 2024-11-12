@@ -109,6 +109,7 @@ const Profile = () => {
       value={profileData.firstName || ""}
       onChange={handleChange}
       disabled={!isEditing}
+      style={{backgroundColor: "white"}}
     />
     <label style={{margin:10}}>Tên:</label>
     <input
@@ -117,6 +118,7 @@ const Profile = () => {
       value={profileData.lastName || ""}
       onChange={handleChange}
       disabled={!isEditing}
+      style={{backgroundColor: "white"}}
     />
   </div>
   <div className="form-group">
@@ -137,6 +139,7 @@ const Profile = () => {
       value={profileData.phone || ""}
       onChange={handleChange}
       disabled={!isEditing}
+      style={{backgroundColor: "white"}}
     />
   </div>
   <div className="form-group">

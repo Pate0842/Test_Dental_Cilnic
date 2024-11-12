@@ -134,6 +134,11 @@ h6 {
 }
 .user{
   position: relative;
+  cursor: pointer;
+}
+
+.pointer {
+  cursor: pointer;
 }
 
 @keyframes moveUpDown {

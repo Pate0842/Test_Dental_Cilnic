@@ -165,7 +165,7 @@ const CreateMedicalRecord = () => {
                   name="examinationDate"
                   placeholder="Ngày khám"
                   defaultValue={new Date().toISOString().split("T")[0]}
-                  required
+                  readOnly
                 />
 
                 <table>
