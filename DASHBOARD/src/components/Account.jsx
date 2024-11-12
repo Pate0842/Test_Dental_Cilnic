@@ -96,7 +96,7 @@ const Account = () => {
         </div>
       </div>
       <div className="banner">
-        <h5>Lịch hẹn</h5>
+        <h5>Danh sách tài khoản bệnh nhân</h5>
         <table>
           <thead>
             <tr>

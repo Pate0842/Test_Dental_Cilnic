@@ -84,8 +84,8 @@ const UpdateDoctor = () => {
               <input type="file" onChange={handleAvatar} />
             </div>
             <div>
-              <input type="text" placeholder="Họ" value={firstName} onChange={(e) => setFirstName(e.target.value)} readOnly />
-              <input type="text" placeholder="Tên" value={lastName} onChange={(e) => setLastName(e.target.value)} readOnly />
+              <input type="text" placeholder="Họ" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+              <input type="text" placeholder="Tên" value={lastName} onChange={(e) => setLastName(e.target.value)} />
               <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} readOnly/>
               <input type="tel" placeholder="SDT" value={phone} onChange={(e) => setPhone(e.target.value)} />
               <input type="text" placeholder="CCCD" value={nic} onChange={(e) => setNic(e.target.value)} readOnly/>
