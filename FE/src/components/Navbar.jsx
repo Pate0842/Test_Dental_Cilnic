@@ -62,7 +62,7 @@ const Navbar = () => {
                     Thông tin cá nhân
                   </Link>
                   <Link to="/medical-record" onClick={() => setShow(!show)}>
-                    Hồ sơ bệnh án
+                    Lịch sử khám bệnh
                   </Link>
                   <button className="logoutBtn btn" onClick={handleLogout}>
                     Đăng xuất
