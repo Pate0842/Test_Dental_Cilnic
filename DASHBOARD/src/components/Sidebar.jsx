@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import { useNavigate } from "react-router-dom";
+import { FaClipboardList } from "react-icons/fa";
 
 const Sidebar = () => {
   const [show, setShow] = useState(false);
@@ -52,6 +53,14 @@ const Sidebar = () => {
     navigateTo("/patients");
     setShow(!show);
   };
+  const gotoServicesPage = () => {
+    navigateTo("/services");
+    setShow(!show);
+  };
+  const gotoMedicalRecordsPage = () => {
+    navigateTo("/medical-records");
+    setShow(!show);
+  };
 
   return (
     <>
@@ -61,9 +70,11 @@ const Sidebar = () => {
       >
         <div className="links">
           <TiHome onClick={gotoHomePage} />
+          <FaClipboardList onClick={gotoMedicalRecordsPage} />
           <FaUserDoctor onClick={gotoDoctorsPage} />
           <MdAddModerator onClick={gotoAccountPage} />
           <IoPersonAddSharp onClick={gotoAddNewDoctor} />
+          <FaClipboardList onClick={gotoServicesPage} />
           <AiFillMessage onClick={gotoMessagesPage} />
           <RiLogoutBoxFill onClick={handleLogout} />
         </div>

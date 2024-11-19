@@ -11,11 +11,13 @@ const CreateMedicalRecord = () => {
 
   const [appointment, setAppointment] = useState(null);
   const [prescriptions, setPrescriptions] = useState([{ name: "", quantity: 1, unit: "", usage: "" }]);
+  const [services, setServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([{ serviceId: "", notes: "" }]);
   const [suggestions, setSuggestions] = useState([]);
-  const [focusedRow, setFocusedRow] = useState(null); // Track which row is focused
+  const [focusedRow, setFocusedRow] = useState(null);
   const limitedSuggestions = suggestions.slice(0, 100);
-  const { state } = useLocation();  // Lấy dữ liệu setAppointments từ Dashboard
-  const { setAppointments } = state || {};  // Gán setAppointments nếu có
+  const { state } = useLocation(); // Dữ liệu setAppointments từ Dashboard
+  const { setAppointments } = state || {};
 
   const medicines = [
     { name: "Paracetamol", unit: "Viên", usage: "Tối 1 sáng 1" },
@@ -25,6 +27,7 @@ const CreateMedicalRecord = () => {
     { name: "Amoxicillin", unit: "Viên", usage: "Tối 1 sáng 1" },
   ];
 
+  // Tải dữ liệu cuộc hẹn
   useEffect(() => {
     const fetchAppointment = async () => {
       try {
@@ -47,6 +50,25 @@ const CreateMedicalRecord = () => {
     }
   }, [appointmentId]);
 
+  // Tải danh sách dịch vụ
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:4000/api/v1/service/getAll", { withCredentials: true });
+        if (data.success) {
+          setServices(data.services);
+        } else {
+          toast.error(data.message || "Lỗi khi tải danh sách dịch vụ.");
+        }
+      } catch (error) {
+        toast.error("Không thể tải danh sách dịch vụ.");
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  // Gửi yêu cầu tạo hồ sơ bệnh án
   const handleSubmit = async (e) => {
     e.preventDefault();
     const medicalRecord = {
@@ -59,32 +81,33 @@ const CreateMedicalRecord = () => {
         unit: prescription.unit,
         usage: prescription.usage,
       })),
+      services: selectedServices.map((service) => ({
+        serviceId: service.serviceId,
+        notes: service.notes,
+      })),
     };
-  
+
     try {
       const response = await axios.post("http://localhost:4000/api/v1/medicalRecord/post", medicalRecord, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
-  
+
       if (response.data.success) {
-        toast.success("Đơn thuốc đã được tạo thành công!");
-  
-        // Update the appointments list in Dashboard after success
+        toast.success("Hồ sơ bệnh án đã được tạo thành công!");
         if (setAppointments) {
           setAppointments((prevAppointments) =>
             prevAppointments.filter((appointment) => appointment._id !== appointmentId)
           );
         }
-  
-        navigate("/"); // Navigate after success
+        navigate("/");
       }
     } catch (error) {
-      toast.error("Đã có lỗi khi tạo đơn thuốc.");
-      console.error("Error:", error);
+      toast.error("Đã có lỗi khi tạo hồ sơ bệnh án.");
     }
   };
 
+  // Quản lý đơn thuốc
   const handlePrescriptionChange = (index, field, value) => {
     const updatedPrescriptions = [...prescriptions];
     updatedPrescriptions[index][field] = value;
@@ -94,95 +117,70 @@ const CreateMedicalRecord = () => {
         medicine.name.toLowerCase().startsWith(value.toLowerCase())
       );
       setSuggestions(filteredSuggestions);
-      setFocusedRow(index); // Set focus to current row
+      setFocusedRow(index);
     } else {
-      setFocusedRow(null); // Remove focus if input is empty
+      setFocusedRow(null);
     }
 
     setPrescriptions(updatedPrescriptions);
-  };
-
-  const handleSuggestionClick = (index, medicine) => {
-    const updatedPrescriptions = [...prescriptions];
-    updatedPrescriptions[index].name = medicine.name;
-    updatedPrescriptions[index].usage = medicine.usage;
-    updatedPrescriptions[index].unit = medicine.unit;
-    setPrescriptions(updatedPrescriptions);
-    setSuggestions([]);
-    setFocusedRow(null);
   };
 
   const addPrescription = () => {
-    if (prescriptions.length < 10) {
-      setPrescriptions([...prescriptions, { name: "", quantity: 1, unit: "", usage: "" }]);
-    }
+    setPrescriptions([...prescriptions, { name: "", quantity: 1, unit: "", usage: "" }]);
   };
 
   const deletePrescription = (index) => {
-    const updatedPrescriptions = prescriptions.filter((_, i) => i !== index);
-    setPrescriptions(updatedPrescriptions);
+    setPrescriptions(prescriptions.filter((_, i) => i !== index));
+  };
+
+  // Quản lý dịch vụ
+  const handleServiceChange = (index, field, value) => {
+    const updatedServices = [...selectedServices];
+    updatedServices[index][field] = value;
+    setSelectedServices(updatedServices);
+  };
+
+  const addService = () => {
+    setSelectedServices([...selectedServices, { serviceId: "", notes: "" }]);
+  };
+
+  const deleteService = (index) => {
+    setSelectedServices(selectedServices.filter((_, i) => i !== index));
   };
 
   return (
     <section className="page">
       <section className="container add-doctor-form">
-        <h1 className="form-title">CẬP NHẬT BÁC SĨ</h1>
+        <h1 className="form-title">TẠO HỒ SƠ BỆNH ÁN</h1>
         {appointment ? (
           <form onSubmit={handleSubmit}>
-            <div className="first-wrapper">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Họ"
-                  value={appointment.firstName || ""}
-                  readOnly
-                />
-                <input
-                  type="text"
-                  placeholder="Tên"
-                  value={appointment.lastName || ""}
-                  readOnly
-                />
-                <input
-                  type="tel"
-                  placeholder="Số điện thoại"
-                  value={appointment.phone || ""}
-                  readOnly
-                />
-                <input
-                  type="date"
-                  placeholder="Ngày sinh"
-                  value={appointment.dob ? appointment.dob.substring(0, 10) : ""}
-                  readOnly
-                />
-                <select value={appointment.gender || ""} disabled>
-                  <option value="Nam">Nam</option>
-                  <option value="Nữ">Nữ</option>
-                </select>
-                <textarea name="diagnosis" placeholder="Chẩn đoán" required></textarea>
-                <input
-                  type="date"
-                  name="examinationDate"
-                  placeholder="Ngày khám"
-                  defaultValue={new Date().toISOString().split("T")[0]}
-                  readOnly
-                />
-
+            <div className="form-body">
+              <div className="input-group">
+                <input type="text" value={appointment.firstName || ""} readOnly placeholder="Họ" />
+                <input type="text" value={appointment.lastName || ""} readOnly placeholder="Tên" />
+              </div>
+              <textarea name="diagnosis" placeholder="Chẩn đoán" required></textarea>
+              <input
+                type="date"
+                name="examinationDate"
+                defaultValue={new Date().toISOString().split("T")[0]}
+                readOnly
+              />
+              <div className="prescriptions">
+                <h3>Đơn thuốc</h3>
                 <table>
                   <thead>
                     <tr>
-                      <th>Số thứ tự</th>
                       <th>Tên thuốc</th>
                       <th>Số lượng</th>
-                      <th>Đơn vị tính</th>
-                      <th>Cách dùng</th>
+                      <th>Đơn vị</th>
+                      <th>Liều dùng</th>
                       <th>Hành động</th>
                     </tr>
                   </thead>
                   <tbody>
                     {prescriptions.map((prescription, index) => (
                       <tr key={index}>
-                        <td><input type="text" value={index + 1} readOnly /></td>
                         <td>
                           <input
                             type="text"
@@ -191,28 +189,12 @@ const CreateMedicalRecord = () => {
                             placeholder="Tên thuốc"
                             required
                           />
-                          {focusedRow === index && limitedSuggestions.length > 0 && (
-                            <ul className="suggestions-list">
-                              {limitedSuggestions.map((medicine, i) => (
-                                <li
-                                  key={i}
-                                  className="suggestion-item"
-                                  onMouseDown={() => handleSuggestionClick(index, medicine)}
-                                >
-                                  {medicine.name}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
                         </td>
-
                         <td>
                           <input
                             type="number"
                             value={prescription.quantity}
                             onChange={(e) => handlePrescriptionChange(index, "quantity", e.target.value)}
-                            min={1}
-                            step={1}
                             required
                           />
                         </td>
@@ -221,7 +203,7 @@ const CreateMedicalRecord = () => {
                             type="text"
                             value={prescription.unit}
                             onChange={(e) => handlePrescriptionChange(index, "unit", e.target.value)}
-                            placeholder="Đơn vị tính"
+                            placeholder="Đơn vị"
                             required
                           />
                         </td>
@@ -229,36 +211,73 @@ const CreateMedicalRecord = () => {
                           <input
                             type="text"
                             value={prescription.usage}
-                            onChange={(e) => handlePrescriptionChange(index, "usage", e.target.value)} // Update usage
+                            onChange={(e) => handlePrescriptionChange(index, "usage", e.target.value)}
                             placeholder="Liều dùng"
                           />
                         </td>
                         <td>
-                          <div className="kedon2 pointer" onClick={() => deletePrescription(index)}>
-                            Xóa
-                          </div>
+                          <button type="button" onClick={() => deletePrescription(index)}>Xóa</button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-
-                <button type="button" onClick={addPrescription}>
-                  Thêm thuốc
-                </button>
-
-                <button type="submit" className="submit">
-                  Cập nhật đơn thuốc
-                </button>
+                <button type="button" onClick={addPrescription}>Thêm thuốc</button>
               </div>
+
+              <div className="services">
+                <h3>Dịch vụ</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Dịch vụ</th>
+                      <th>Ghi chú</th>
+                      <th>Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedServices.map((service, index) => (
+                      <tr key={index}>
+                        <td>
+                          <select
+                            value={service.serviceId}
+                            onChange={(e) => handleServiceChange(index, "serviceId", e.target.value)}
+                            required
+                          >
+                            <option value="">Chọn dịch vụ</option>
+                            {services.map((service) => (
+                              <option key={service._id} value={service._id}>
+                                {service.serviceName}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            value={service.notes}
+                            onChange={(e) => handleServiceChange(index, "notes", e.target.value)}
+                            placeholder="Ghi chú"
+                          />
+                        </td>
+                        <td>
+                          <button type="button" onClick={() => deleteService(index)}>Xóa</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button type="button" onClick={addService}>Thêm dịch vụ</button>
+              </div>
+              <button type="submit" className="submit-btn">Tạo hồ sơ</button>
             </div>
           </form>
         ) : (
-          <p>Đang tải thông tin cuộc hẹn...</p>
+          <p>Đang tải thông tin...</p>
         )}
       </section>
     </section>
   );
 };
 
-export default CreateMedicalRecord; 
+export default CreateMedicalRecord;

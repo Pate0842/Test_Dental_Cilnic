@@ -9,6 +9,8 @@ import {errorMiddleware} from './middlewares/errorMiddlewares.js';
 import userRouter from "./router/userRouter.js";
 import appointmentRouter from "./router/appointmentRouter.js";
 import medicalRecordRouter from "./router/medicalRecordRouter.js";
+import paymentRouter from "./router/paymentRouter.js";
+import serviceRouter from "./router/serviceRouter.js";
 
 const app = express();
 config({path: "./config/config.env"})
@@ -33,7 +35,9 @@ app.use(
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/appointment", appointmentRouter);
-app.use("/api/v1/medicalRecord", medicalRecordRouter);
+app.use("/api/v1/medical-record", medicalRecordRouter);
+app.use("/api/v1/payment", paymentRouter);
+app.use("/api/v1/service", serviceRouter);
 
 dbConnection();
 

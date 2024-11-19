@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 const Dashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [selectedTab, setSelectedTab] = useState("appointments");
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -44,6 +46,21 @@ const Dashboard = () => {
       }
     };
     fetchDoctors();
+  }, []);
+
+  useEffect(() => {
+    const fetchMedicalRecords = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:4000/api/v1/medicalRecord/getall",
+          { withCredentials: true }
+        );
+        setMedicalRecords(data.medicalRecords);
+      } catch {
+        setMedicalRecords([]);
+      }
+    };
+    fetchMedicalRecords();
   }, []);
 
   const handleUpdateStatus = async (appointmentId, status) => {

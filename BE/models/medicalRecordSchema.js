@@ -60,7 +60,19 @@ const medicalRecordSchema = new mongoose.Schema({
         required: [true, "Cách dùng là bắt buộc!"],
       },
     },
-  ], 
+  ],
+  services: [
+    {
+      serviceId: {
+        type: mongoose.Schema.ObjectId,
+        ref: "Service",
+        required: [true, "ID dịch vụ là bắt buộc!"],
+      },
+      notes: {
+        type: String, // Ghi chú thêm về dịch vụ, ví dụ: "Thực hiện kỹ thuật đặc biệt"
+      },
+    },
+  ],
 });
 
 export const MedicalRecord = mongoose.model("MedicalRecord", medicalRecordSchema);

@@ -14,6 +14,9 @@ import "./App.css";
 import UpdateDoctor from "./components/UpdateDoctor";
 import Account from "./components/Account";
 import UpdatePatient from "./components/UpdatePatient";
+import Service from "./components/Service";
+import MedicalRecord from "./components/MedicalRecord";
+import MedicalRecordDetail from "./components/MedicalRecordDetail";
 
 const App = () => {
   const { isAuthenticated, setIsAuthenticated, setAdmin } =
@@ -50,6 +53,9 @@ const App = () => {
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/updateDoctor/:doctorId" element={<UpdateDoctor />} />
         <Route path="/updatePatient/:patientId" element={<UpdatePatient />} />
+        <Route path="/services" element={<Service />} />
+        <Route path="/medical-records" element={<MedicalRecord />} />
+        <Route path="/medical-records/:id" element={<MedicalRecordDetail />} />
       </Routes>
       <ToastContainer position="top-center" />
     </Router>
