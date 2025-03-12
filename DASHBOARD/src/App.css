@@ -834,3 +834,48 @@ input[type="time"]:before {
   border-color: #3939d9f2;
   box-shadow: 0 0 0 3px rgba(57, 57, 217, 0.2);
 }
+
+.undo-button {
+  background-color: #ff9800; /* Màu cam nổi bật */
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.2s, border-color 0.3s;
+}
+
+.undo-button:hover {
+  background-color: #e68900; /* Màu cam đậm hơn khi hover */
+  transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
+  border: 1px solid #ffcc80; /* Thêm viền sáng khi hover */
+}
+
+.undo-button:focus,
+.undo-button:focus-visible {
+  outline: 3px solid #ffb74d; /* Viền sáng khi focus */
+}
+
+@media (prefers-color-scheme: light) {
+  .undo-button {
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  .undo-button:hover {
+    background-color: #e68900;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .undo-button {
+    background-color: #ffb74d; /* Màu cam sáng hơn trong chế độ tối */
+    color: #242424;
+  }
+
+  .undo-button:hover {
+    background-color: #ffa726;
+  }
+}

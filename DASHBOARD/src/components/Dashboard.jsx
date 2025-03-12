@@ -67,11 +67,11 @@ const Dashboard = () => {
     // Find the current appointment
     const appointment = appointments.find((app) => app._id === appointmentId);
   
-    // Check if the status has already been updated from "Đang Chờ"
-    if (appointment.status !== "Đang Chờ") {
-      toast.error("Bạn không thể thay đổi trạng thái cuộc hẹn này nữa!");
-      return; // Stop further execution if status is already updated
-    }
+    // // Check if the status has already been updated from "Đang Chờ"
+    // if (appointment.status !== "Đang Chờ") {
+    //   toast.error("Bạn không thể thay đổi trạng thái cuộc hẹn này nữa!");
+    //   return; // Stop further execution if status is already updated
+    // }
   
     try {
       const hasVisited = status === "Đã Chấp Nhận"; // Automatically mark as visited if accepted
@@ -102,6 +102,30 @@ const Dashboard = () => {
     return <Navigate to={"/login"} />;
   }
 
+  const handleUndo = async (appointmentId) => {
+    try {
+      const { data } = await axios.put(
+        `http://localhost:4000/api/v1/appointment/undo/${appointmentId}`,
+        {},
+        { withCredentials: true }
+      );
+  
+      // Cập nhật danh sách lịch hẹn sau khi hoàn tác
+      setAppointments((prevAppointments) =>
+        prevAppointments.map((appointment) =>
+          appointment._id === appointmentId
+            ? { ...appointment, status: "Đang Chờ", hasVisited: false }
+            : appointment
+        )
+      );
+  
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Lỗi khi hoàn tác lịch hẹn!");
+    }
+  };
+  
+
   return (
     <>
       <section className="dashboard page">
@@ -129,55 +153,64 @@ const Dashboard = () => {
         <div className="banner">
           <h5>Lịch hẹn</h5>
           <table>
-            <thead>
-              <tr>
-                <th>Tên bệnh nhân</th>
-                <th>Ngày hẹn</th>
-                <th>Email</th>
-                <th>SDT</th>
-                <th>Tên bác sĩ</th>
-                <th>Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments && appointments.length > 0
-                ? appointments.map((appointment) => (
-                    <tr key={appointment._id}>
-                      <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
-                      <td>{new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(appointment.appointment_date))}</td>
+          <thead>
+  <tr>
+    <th>Tên bệnh nhân</th>
+    <th>Ngày hẹn</th>
+    <th>Email</th>
+    <th>SDT</th>
+    <th>Tên bác sĩ</th>
+    <th>Trạng thái</th>
+    <th>Thực hiện</th> {/* Cột mới */}
+  </tr>
+</thead>
+<tbody>
+  {appointments && appointments.length > 0
+    ? appointments.map((appointment) => (
+        <tr key={appointment._id}>
+          <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
+          <td>{new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(appointment.appointment_date))}</td>
+          <td>{appointment.email}</td>
+          <td>{appointment.phone}</td>
+          <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>
+          <td>
+            <select
+              className={
+                appointment.status === "Đang Chờ"
+                  ? "value-pending"
+                  : appointment.status === "Đã Chấp Nhận"
+                  ? "value-accepted"
+                  : "value-rejected"
+              }
+              value={appointment.status}
+              onChange={(e) =>
+                handleUpdateStatus(appointment._id, e.target.value)
+              }
+            >
+              <option value="Đang Chờ" className="value-pending">
+                Đang Chờ
+              </option>
+              <option value="Đã Chấp Nhận" className="value-accepted">
+                Đã Chấp Nhận
+              </option>
+              <option value="Đã Từ Chối" className="value-rejected">
+                Đã Từ Chối
+              </option>
+            </select>
+          </td>
+          <td> 
+            <button 
+              className="undo-button"
+              onClick={() => handleUndo(appointment._id)}
+            >
+              Hoàn tác
+            </button>
+          </td> {/* Cột mới */}
+        </tr>
+      ))
+    : "No Appointments Found!"}
+</tbody>
 
-                      <td>{appointment.email}</td>
-                      <td>{appointment.phone}</td>
-                      <td>{`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}</td>
-                      <td>
-                        <select
-                          className={
-                            appointment.status === "Đang Chờ"
-                              ? "value-pending"
-                              : appointment.status === "Đã Chấp Nhận"
-                              ? "value-accepted"
-                              : "value-rejected"
-                          }
-                          value={appointment.status}
-                          onChange={(e) =>
-                            handleUpdateStatus(appointment._id, e.target.value)
-                          }
-                        >
-                          <option value="Đang Chờ" className="value-pending">
-                            Đang Chờ
-                          </option>
-                          <option value="Đã Chấp Nhận" className="value-accepted">
-                            Đã Chấp Nhận
-                          </option>
-                          <option value="Đã Từ Chối" className="value-rejected">
-                            Đã Từ Chối
-                          </option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))
-                : "No Appointments Found!"}
-            </tbody>
           </table>
         </div>
       </section>
