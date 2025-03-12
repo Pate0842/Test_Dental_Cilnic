@@ -27,4 +27,4 @@ class GetUserAppointmentStrategy extends AppointmentStrategy {
   }
 }
 
-export default new GetUserAppointmentStrategy();
+export default new GetUserAppointmentStrategy(); 

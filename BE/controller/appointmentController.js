@@ -4,7 +4,7 @@ import GetAllAppointmentsStrategy from "../strategies/appointment/getAllAppointm
 import GetAppointmentByIdStrategy from "../strategies/appointment/getAppointmentByIdStrategy.js";
 import UpdateAppointmentStatusStrategy from "../strategies/appointment/updateAppointmentStatusStrategy.js";
 import DeleteAppointmentStrategy from "../strategies/appointment/deleteAppointmentStrategy.js";
-import GetUserAppointmentStrategy from "../strategies/appointment/getUserAppointmentStrategy.js"; // ✅ Import chiến lược mới
+import GetUserAppointmentStrategy from "../strategies/appointment/getUserAppointmentStrategy.js";
 
 export const postAppointment = (req, res, next) => {
   AppointmentContext.setStrategy(PostAppointmentStrategy);
@@ -31,7 +31,6 @@ export const deleteAppointment = (req, res, next) => {
   AppointmentContext.executeStrategy(req, res, next);
 };
 
-// ✅ Thêm phương thức mới
 export const getUserAppointments = (req, res, next) => {
   AppointmentContext.setStrategy(GetUserAppointmentStrategy);
   AppointmentContext.executeStrategy(req, res, next);
