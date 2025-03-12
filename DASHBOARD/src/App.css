@@ -879,3 +879,14 @@ input[type="time"]:before {
     background-color: #ffa726;
   }
 }
+.card.regular {
+  background-color: #f0f0f0; /* Màu nền cho tin nhắn thông thường */
+}
+
+.card.urgent {
+  background-color: #ffe6e6; /* Màu nền cho tin nhắn khẩn cấp */
+}
+
+.card.confirmation {
+  background-color: #e6ffe6; /* Màu nền cho tin nhắn xác nhận */
+}

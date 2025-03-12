@@ -49,6 +49,14 @@ const Messages = () => {
                   <p>
                     Lời nhắn: <span>{element.message}</span>
                   </p>
+                  <p>
+                    Loại tin nhắn:{" "}
+                    <span
+                      className={`message-type ${element.type}`}
+                    >
+                      {element.type === "regular" ? "Thông thường" : element.type === "urgent" ? "Khẩn cấp" : "Xác nhận"}
+                    </span>
+                  </p>
                 </div>
               </div>
             );
