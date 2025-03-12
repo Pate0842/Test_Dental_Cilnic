@@ -1099,4 +1099,18 @@ form {
 .record-id {
   font-weight: 480;
 }
+/* Thêm vào file CSS hiện tại (ví dụ: index.css hoặc styles.css) */
+.form-component form select {
+  flex: 1;
+  font-size: 24px;
+  padding: 10px 40px;
+  border-radius: 7px;
+  border: 1px solid gray;
+  margin-bottom: 20px; /* Đảm bảo khoảng cách với textarea */
+}
 
+/* Đảm bảo nút "Gửi" căn giữa tốt hơn */
+.form-component button {
+  margin: 0 auto;
+  display: block;
+}
