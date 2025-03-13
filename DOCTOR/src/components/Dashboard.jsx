@@ -11,6 +11,16 @@ const Dashboard = () => {
   const { isAuthenticated, doctor } = useContext(Context);
   const navigate = useNavigate();
 
+  const NullAppointment = {
+    _id: "null",
+    firstName: "Không có",
+    lastName: "lịch hẹn",
+    email: "N/A",
+    phone: "N/A",
+    appointment_date: "N/A",
+    status: "Không có cuộc hẹn",
+  };
+
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -18,43 +28,42 @@ const Dashboard = () => {
           "http://localhost:4000/api/v1/appointment/getallDoctor",
           { withCredentials: true }
         );
-
-        // Lọc các cuộc hẹn thuộc về bác sĩ hiện tại
+  
+        // Lọc cuộc hẹn của bác sĩ hiện tại
         const doctorAppointments = data.appointments.filter(
           (appointment) => appointment.doctorId === doctor._id
         );
-
-        // Đếm tổng số cuộc hẹn của bác sĩ hiện tại
+  
+        // Đếm tổng số cuộc hẹn
         setTotalAppointments(doctorAppointments.length);
-
-        // Lọc các cuộc hẹn đã chấp nhận và chưa xử lý
+  
+        // Lọc cuộc hẹn đã chấp nhận và chưa xử lý
         const approvedAppointments = doctorAppointments.filter(
           (appointment) =>
             appointment.status === "Đã Chấp Nhận" && !appointment.isProcessed
         );
-
-        // Lọc các cuộc hẹn trong ngày hôm nay
+  
+        // Lọc cuộc hẹn trong ngày được chọn
+        const filteredAppointments = approvedAppointments.filter((appointment) =>
+          appointment.appointment_date.startsWith(selectedDate)
+        );
+  
+        // Nếu không có cuộc hẹn nào trong ngày được chọn, dùng Null Object
+        setAppointments(filteredAppointments.length > 0 ? filteredAppointments : [NullAppointment]);
+  
+        // Đếm số lượng cuộc hẹn hôm nay
         const today = new Date().toISOString().split("T")[0];
         const todayAppointments = approvedAppointments.filter((appointment) =>
           appointment.appointment_date.startsWith(today)
         );
-
-        // Cập nhật số lượng cuộc hẹn hôm nay
         setTodayAppointmentsCount(todayAppointments.length);
-
-        // Lọc các cuộc hẹn theo ngày được chọn
-        const filteredAppointments = approvedAppointments.filter((appointment) =>
-          appointment.appointment_date.startsWith(selectedDate)
-        );
-
-        setAppointments(filteredAppointments);
       } catch {
-        setAppointments([]);
+        setAppointments([NullAppointment]);
         setTodayAppointmentsCount(0);
         setTotalAppointments(0);
       }
     };
-
+  
     if (doctor) {
       fetchAppointments();
     }
@@ -110,25 +119,27 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {appointments && appointments.length > 0
-                ? appointments.map((appointment) => (
-                    <tr key={appointment._id}>
-                      <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
-                      <td>{appointment.email}</td>
-                      <td>{appointment.phone}</td>
-                      <td>
-                        <a
-                          className="kedon"
-                          href=""
-                          onClick={() => handleCreateMedicalRecord(appointment._id)} // Redirect to create medical record
-                        >
-                          Kê đơn
-                        </a>
-                      </td>
-                    </tr>
-                  ))
-                : "Không có lịch khám nào!"}
-            </tbody>
+  {appointments.map((appointment) => (
+    <tr key={appointment._id}>
+      <td>{`${appointment.firstName} ${appointment.lastName}`}</td>
+      <td>{appointment.email}</td>
+      <td>{appointment.phone}</td>
+      <td>
+        {appointment._id !== "null" ? (
+          <a
+            className="kedon"
+            href=""
+            onClick={() => handleCreateMedicalRecord(appointment._id)}
+          >
+            Kê đơn
+          </a>
+        ) : (
+          <span style={{ color: "gray" }}>Không có lịch khám nào!</span>
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
           </table>
         </div>
       </section>
