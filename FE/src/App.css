@@ -1114,3 +1114,13 @@ form {
   margin: 0 auto;
   display: block;
 }
+/* Thêm vào file CSS của bạn */
+.logoutBtn:disabled {
+  opacity: 0.6;
+}
+
+.links a,
+.dropdown a,
+.logoutBtn {
+  transition: all 0.3s ease;
+}
