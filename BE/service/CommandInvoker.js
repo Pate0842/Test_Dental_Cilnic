@@ -13,7 +13,7 @@ class CommandInvoker {
     if (lastCommand) {
       await lastCommand.undo(req, res, next);
     } else {
-      res.status(400).json({ success: false, message: "Không có thao tác nào để hoàn tác!" });
+      next(new Error('No command to undo', 400));
     }
   }
 }
