@@ -16,16 +16,21 @@ const Login = () => {
     try {
       const res = await axios.post(
         "http://localhost:4000/api/v1/user/login",
-        { email, password, role: "Bệnh nhân" }, // Không cần confirmPassword
+        { email, password, role: "Bệnh nhân" },
         {
           withCredentials: true,
           headers: { "Content-Type": "application/json" },
         }
       );
-
+  
       toast.success(res.data.message);
       setIsAuthenticated(true);
-      setUser({ firstName: res.data.user.firstName, lastName: res.data.user.lastName }); // Lưu thông tin người dùng
+  
+      // Tạo fullName từ firstName và lastName nếu không có sẵn
+      const userData = res.data.user;
+      const fullName = userData.fullName || `${userData.firstName} ${userData.lastName}`;
+      setUser({ ...userData, fullName }); // Lưu toàn bộ thông tin người dùng
+  
       navigateTo("/");
       setEmail("");
       setPassword("");
@@ -33,6 +38,7 @@ const Login = () => {
       toast.error(error.response.data.message);
     }
   };
+  
 
   if (isAuthenticated) {
     return <Navigate to={"/"} />;
