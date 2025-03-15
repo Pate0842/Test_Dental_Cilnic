@@ -8,6 +8,7 @@ const AppointmentStatus = () => {
 
   useEffect(() => {
     const loadAppointments = async () => {
+      // Facade Pattern: Sử dụng AppointmentFacade.fetchUserAppointments() để đơn giản hóa việc lấy danh sách lịch hẹn
       const appointmentsData = await AppointmentFacade.fetchUserAppointments();
       setAppointments(appointmentsData);
     };

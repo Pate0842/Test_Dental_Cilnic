@@ -1,4 +1,3 @@
-// components/Navbar.jsx
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -39,7 +38,7 @@ const Navbar = ({
     navigateTo("/login");
   };
 
-  // Sử dụng fullName từ dữ liệu đã chuẩn hóa
+// Adapter Pattern: Sử dụng fullName từ dữ liệu đã chuẩn hóa bởi UserAdapter (chuyển giao diện từ API sang UI)
   const displayUserName = user?.fullName || "User";
 
   const linkMapping = {
@@ -61,10 +60,10 @@ const Navbar = ({
                 key={index}
                 to={linkMapping[link]}
                 onClick={() => setShow(!show)}
-                onMouseEnter={() => handleLinkHover(link)}
-                onMouseLeave={handleLinkLeave}
+                onMouseEnter={() => handleLinkHover(link)} // Decorator Pattern: Sử dụng handleLinkHover từ HOC
+                onMouseLeave={handleLinkLeave} // Decorator Pattern: Sử dụng handleLinkLeave từ HOC
                 style={{
-                  color: hoveredLink === link ? "#007bff" : "#222",
+                  color: hoveredLink === link ? "#007bff" : "#222", // Decorator Pattern: Sử dụng hoveredLink từ HOC
                   transition: "color 0.3s ease",
                 }}
               >
@@ -90,11 +89,11 @@ const Navbar = ({
                       key={index}
                       to={item.path}
                       onClick={() => setShow(!show)}
-                      onMouseEnter={() => handleLinkHover(item.label)}
-                      onMouseLeave={handleLinkLeave}
+                      onMouseEnter={() => handleLinkHover(item.label)} // Decorator Pattern: Sử dụng handleLinkHover từ HOC
+                      onMouseLeave={handleLinkLeave} // Decorator Pattern: Sử dụng handleLinkLeave từ HOC
                       style={{
                         backgroundColor:
-                          hoveredLink === item.label ? "#f5f5f5" : "transparent",
+                          hoveredLink === item.label ? "#f5f5f5" : "transparent", // Decorator Pattern: Sử dụng hoveredLink từ HOC
                         transition: "background-color 0.3s ease",
                       }}
                     >
@@ -103,13 +102,13 @@ const Navbar = ({
                   ))}
                   <button
                     className="logoutBtn btn"
-                    onClick={() => enhancedHandleLogout(handleLogout)}
-                    disabled={isLoggingOut}
-                    onMouseEnter={() => handleLinkHover("Đăng xuất")}
-                    onMouseLeave={handleLinkLeave}
+                    onClick={() => enhancedHandleLogout(handleLogout)} // Decorator Pattern: Sử dụng enhancedHandleLogout từ HOC
+                    disabled={isLoggingOut} // Decorator Pattern: Sử dụng isLoggingOut từ HOC
+                    onMouseEnter={() => handleLinkHover("Đăng xuất")} // Decorator Pattern: Sử dụng handleLinkHover từ HOC
+                    onMouseLeave={handleLinkLeave} // Decorator Pattern: Sử dụng handleLinkLeave từ HOC
                     style={{
                       backgroundColor:
-                        hoveredLink === "Đăng xuất" ? "#f5f5f5" : "transparent",
+                        hoveredLink === "Đăng xuất" ? "#f5f5f5" : "transparent", // Decorator Pattern: Sử dụng hoveredLink từ HOC
                       transition: "background-color 0.3s ease",
                       cursor: isLoggingOut ? "not-allowed" : "pointer",
                     }}
@@ -141,6 +140,7 @@ Navbar.propTypes = {
   hoveredLink: PropTypes.string,
 };
 
+// Decorator Pattern: Áp dụng HOC withNavbarEnhancements để mở rộng chức năng của Navbar
 const EnhancedNavbar = withNavbarEnhancements(Navbar);
 EnhancedNavbar.displayName = "EnhancedNavbar";
 

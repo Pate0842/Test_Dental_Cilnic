@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const AppointmentFacade = {
-  // Lấy danh sách bác sĩ
+  // Facade Pattern: Đơn giản hóa việc lấy danh sách bác sĩ (ẩn chi tiết gọi API và xử lý lỗi)
   fetchDoctors: async () => {
     try {
       const { data } = await axios.get("http://localhost:4000/api/v1/user/doctors", {
@@ -16,7 +16,7 @@ const AppointmentFacade = {
     }
   },
 
-  // Lấy danh sách lịch hẹn của người dùng
+  // Facade Pattern: Đơn giản hóa việc lấy danh sách lịch hẹn (ẩn chi tiết gọi API, xử lý lỗi, và sắp xếp dữ liệu)
   fetchUserAppointments: async () => {
     try {
       const { data } = await axios.get("http://localhost:4000/api/v1/appointment/getuserappointments", {
@@ -30,7 +30,7 @@ const AppointmentFacade = {
     }
   },
 
-  // Đặt lịch hẹn
+  // Facade Pattern: Đơn giản hóa việc tạo lịch hẹn (ẩn chi tiết gọi API, xử lý dữ liệu và lỗi)
   createAppointment: async (appointmentData) => {
     try {
       const hasVisitedBool = Boolean(appointmentData.hasVisited);
@@ -54,7 +54,7 @@ const AppointmentFacade = {
     }
   },
 
-  // Hàm kiểm tra ngày hợp lệ (tái sử dụng cho cả DOB và Appointment Date)
+  // Facade Pattern: Đơn giản hóa việc validate ngày (ẩn logic kiểm tra ngày phức tạp)
   validateDate: (selectedDate, isDob = false) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
