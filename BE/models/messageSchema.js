@@ -41,5 +41,18 @@ const messageSchema = new mongoose.Schema({
     type: Date,
   },
 });
+// 💡 Prototype Pattern: Thêm phương thức clone()
+messageSchema.methods.clone = function () {
+  return new this.constructor({
+    firstName: this.firstName,
+    lastName: this.lastName,
+    email: this.email,
+    phone: this.phone,
+    message: this.message,
+    type: this.type,
+    priority: this.priority,
+    confirmedAt: this.confirmedAt,
+  });
+};
 
 export const Message = mongoose.model("Message", messageSchema);
