@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 const MessageForm = () => {
@@ -8,67 +8,98 @@ const MessageForm = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("regular");
-  const [loading, setLoading] = useState(false);
+  const [messageType, setMessageType] = useState("regular"); // State cho messageType, mặc định là "regular"
 
-  // Khi nhập email, kiểm tra trên database
-  const handleEmailBlur = async () => {
-    if (!email) return; // Không có email thì không request
-
+  const handleMessage = async (e) => {
+    e.preventDefault();
     try {
-      setLoading(true);
-      const { data } = await axios.get(
-        `http://localhost:4000/api/v1/message/findByEmail?email=${email}`
+      const response = await axios.post(
+        "http://localhost:4000/api/v1/message/send",
+        { firstName, lastName, email, phone, message, messageType }, // Thêm messageType vào dữ liệu gửi
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
-      if (data) {
-        // ⭐ Prototype Pattern: Clone dữ liệu từ tin nhắn trước đó
-        setFirstName(data.firstName || "");  // Clone họ
-        setLastName(data.lastName || "");    // Clone tên
-        setPhone(data.phone || "");          // Clone số điện thoại
-        setMessage(data.message || "");      // Clone nội dung tin nhắn
-        setMessageType(data.messageType || "regular"); // Clone loại tin nhắn
-
-        toast.info("Đã tự động điền tin nhắn gần nhất của bạn."); // Thông báo khi clone dữ liệu
-      }
+      // Hiển thị toast với thông báo từ server, bao gồm details
+      toast.success(`${response.data.message} - ${response.data.details}`);
+      
+      // Reset form
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setMessage("");
+      setMessageType("regular"); // Reset messageType về mặc định
     } catch (error) {
-      toast.warn("Email này chưa từng gửi tin nhắn.");
-    } finally {
-      setLoading(false);
+      toast.error(error.response?.data?.message || "Đã xảy ra lỗi!");
     }
   };
 
   return (
-    <div className="container form-component message-form">
-      <h2>Gửi cho chúng tôi một tin nhắn</h2>
-
-      <form>
-        <div>
-          <input type="text" placeholder="Họ" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-          <input type="text" placeholder="Tên" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-        </div>
-        <div>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={handleEmailBlur} // Khi rời khỏi ô input, kiểm tra email
+    <>
+      <div className="container form-component message-form">
+        <h2>Gửi cho chúng tôi một tin nhắn</h2>
+        <form onSubmit={handleMessage}>
+          <div>
+            <input
+              type="text"
+              placeholder="Họ"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Tên"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <input
+              type="email" // Thay đổi type thành "email" để hỗ trợ kiểm tra định dạng
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="tel"
+              placeholder="Số Điện Thoại"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              inputMode="tel"
+              pattern="[0-9]{10}" // Đảm bảo chỉ nhận 10 chữ số
+              required
+            />
+          </div>
+          <select
+            value={messageType}
+            onChange={(e) => setMessageType(e.target.value)}
+            required
+            style={{ padding: "10px 40px", borderRadius: "7px", border: "1px solid gray", fontSize: "24px" }}
+          >
+            <option value="regular">Tin nhắn thông thường</option>
+            <option value="urgent">Tin nhắn khẩn cấp</option>
+            <option value="confirmation">Tin nhắn xác nhận</option>
+          </select>
+          <textarea
+            rows={7}
+            placeholder="Lời Nhắn"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             required
           />
-          <input type="tel" placeholder="Số Điện Thoại" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-        </div>
-        <select value={messageType} onChange={(e) => setMessageType(e.target.value)} required>
-          <option value="regular">Tin nhắn thông thường</option>
-          <option value="urgent">Tin nhắn khẩn cấp</option>
-          <option value="confirmation">Tin nhắn xác nhận</option>
-        </select>
-        <textarea rows={7} placeholder="Lời Nhắn" value={message} onChange={(e) => setMessage(e.target.value)} required />
-        <div>
-          <button type="submit" disabled={loading}>{loading ? "Đang tải..." : "Gửi"}</button>
-        </div>
-      </form>
-    </div>
+          <div style={{ justifyContent: "center", alignItems: "center" }}>
+            <button type="submit">Gửi</button>
+          </div>
+        </form>
+        <img src="/Vector.png" alt="vector" />
+      </div>
+    </>
   );
 };
 

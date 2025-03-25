@@ -8,7 +8,7 @@ router.post("/post", isPatientAuthenticated, postAppointment);
 router.get("/getall", isAdminAuthenticated, getAllAppointments);
 router.get("/getallDoctor", isDoctorAuthenticated, getAllAppointments);
 router.get("/getAppointmentId/:id", 
-    isAdminAuthenticated || isDoctorAuthenticated,
+    isAdminAuthenticated || isDoctorAuthenticated, 
     getAppointmentById
   );
 router.put("/update/:id", isAdminAuthenticated, updateAppointmentStatus);

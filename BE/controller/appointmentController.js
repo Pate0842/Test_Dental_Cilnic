@@ -7,21 +7,10 @@ import GetUserAppointmentStrategy from "../strategies/appointment/getUserAppoint
 import UpdateAppointmentStatusCommand from "../service/UpdateAppointmentStatusCommand.js";
 import CommandInvoker from "../service/CommandInvoker.js";
 
-
-
 export const postAppointment = (req, res, next) => {
-  try {
-    console.log("📌 [postAppointment] Bắt đầu xử lý...");
-    console.log("📩 Dữ liệu nhận được:", req.body);
-
-    AppointmentContext.setStrategy(PostAppointmentStrategy);
-    AppointmentContext.executeStrategy(req, res, next);
-  } catch (error) {
-    console.error("❌ Lỗi xảy ra trong postAppointment:", error);
-    res.status(500).json({ success: false, message: "Lỗi server" });
-  }
+  AppointmentContext.setStrategy(PostAppointmentStrategy);
+  AppointmentContext.executeStrategy(req, res, next);
 };
-
 
 export const getAllAppointments = (req, res, next) => {
   AppointmentContext.setStrategy(GetAllAppointmentsStrategy);

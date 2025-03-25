@@ -1,5 +1,4 @@
 import { RegularMessage, UrgentMessage, ConfirmationMessage } from "../models/messageTypes.js";
-import { Message } from "../models/messageSchema.js";
 
 // Abstract Factory: Giao diện cho nhà máy tạo tin nhắn
 // Định nghĩa phương thức để tạo các loại tin nhắn
