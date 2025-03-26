@@ -6,6 +6,8 @@ import sendEmail from "../utils/sendEmail.js";
 import cloudinary from "cloudinary"
 import jwt from "jsonwebtoken";
 import PatientRegistration from "../core/PatientRegistration .js";
+import { ConcreteDoctorManager } from "../core/ConcreteDoctorManager.js";
+import { MongoCloudinaryDoctorImplementor } from "../core/MongoCloudinaryDoctorImplementor.js";
 
 export const patientRegister = catchAsyncErrors(async (req, res, next) => {
   const patientRegistration = new PatientRegistration();
@@ -98,80 +100,28 @@ export const addNewAdmin = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+const implementor = new MongoCloudinaryDoctorImplementor();
+const doctorManager = new ConcreteDoctorManager(implementor);
+
 export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return next(new ErrorHandler("Avatar bác sĩ là bắt buộc!", 400));
+  try {
+    if (!req.files || !req.files.docAvatar) {
+      return next(new ErrorHandler("Avatar bác sĩ là bắt buộc!", 400));
+    }
+
+    const doctor = await doctorManager.addNewDoctor(req.body, req.files);
+    res.status(200).json({
+      success: true,
+      message: "Bác sĩ mới đã tạo thành công!",
+      doctor,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 400));
   }
-  const { docAvatar } = req.files;
-  const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
-  if (!allowedFormats.includes(docAvatar.mimetype)) {
-    return next(new ErrorHandler("Định dạng tệp không được hỗ trợ!", 400));
-  }
-  const {
-    firstName,
-    lastName,
-    email,
-    phone,
-    password,
-    gender,
-    dob,
-    nic,
-    doctorDepartment,
-  } = req.body;
-  if (
-    !firstName ||
-    !lastName ||
-    !email ||
-    !phone ||
-    !password || 
-    !gender ||
-    !dob ||
-    !nic ||
-    !doctorDepartment ||
-    !docAvatar
-  )  {
-    return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
-  }
-  const isRegistered = await User.findOne({ email });
-  if (isRegistered) {
-    return next(
-      new ErrorHandler(`${isRegistered.role} với email này đã tồn tại!`)
-    );
-  }
-  const cloudinaryResponse = await cloudinary.uploader.upload(
-    docAvatar.tempFilePath
-  );
-  if (!cloudinaryResponse || cloudinaryResponse.error) {
-    console.error(
-      "Cloudinary Error:",
-      cloudinaryResponse.error || "Unknown Cloudinary error"
-    );
-  }
-  const doctor = await User.create({
-    firstName,
-    lastName,
-    email,
-    phone,
-    nic,
-    dob,
-    gender,
-    password,
-    role: "Bác sĩ",
-    doctorDepartment,
-    docAvatar: {
-      public_id: cloudinaryResponse.public_id,
-      url: cloudinaryResponse.secure_url,
-    },
-  });
-  res.status(200).json({
-    success: true,
-    message: "Bác sĩ mới đã tạo thành công!",
-    doctor,
-  });
 });
 
 export const getAllDoctors = catchAsyncErrors(async (req, res, next) => {
-  const doctors = await User.find({ role: "Bác sĩ" });
+  const doctors = await doctorManager.getAllDoctors();
   res.status(200).json({
     success: true,
     doctors,
@@ -236,20 +186,10 @@ export const logoutDoctor = catchAsyncErrors(async (req, res, next) => {
 export const deleteDoctors = catchAsyncErrors(async (req, res, next) => {
   try {
     const { id } = req.params;
-    const doctor = await User.findById(id);
-
-    if (!doctor || doctor.role !== "Bác sĩ") {
-      return next(new ErrorHandler("Không tìm thấy bác sĩ!", 404));
-    }
-
-    await doctor.deleteOne();
-    res.status(200).json({
-      success: true,
-      message: "Đã xóa bác sĩ!",
-    });
+    const result = await doctorManager.deleteDoctor(id);
+    res.status(200).json(result);
   } catch (error) {
-    console.error("Lỗi khi xóa bác sĩ:", error);
-    next(new ErrorHandler("Có lỗi xảy ra khi xóa bác sĩ.", 500));
+    return next(new ErrorHandler(error.message, 404));
   }
 });
 
@@ -276,63 +216,17 @@ export const deletePatient = catchAsyncErrors(async (req, res, next) => {
 export const updateDoctorHandler = catchAsyncErrors(async (req, res, next) => {
   try {
     const { id } = req.params;
-    const doctor = await User.findById(id);
-
-    if (!doctor || doctor.role !== "Bác sĩ") {
-      return next(new ErrorHandler("Không tìm thấy bác sĩ!", 404));
-    }
-
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      gender,
-      dob,
-      nic,
-      doctorDepartment
-    } = req.body;
-
-    // Kiểm tra các trường bắt buộc
-    if (!firstName || !lastName || !email || !phone || !gender || !dob || !nic || !doctorDepartment) {
-      return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
-    }
-
-    // Cập nhật thông tin bác sĩ
-    Object.assign(doctor, { firstName, lastName, email, phone, gender, dob, nic, doctorDepartment });
-
-    // Xử lý avatar mới nếu có
-    if (req.files && req.files.docAvatar) {
-      const { docAvatar } = req.files;
-      const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
-      
-      if (!allowedFormats.includes(docAvatar.mimetype)) {
-        return next(new ErrorHandler("Định dạng tệp không được hỗ trợ!", 400));
-      }
-
-      const cloudinaryResponse = await cloudinary.uploader.upload(docAvatar.tempFilePath);
-      if (!cloudinaryResponse) {
-        return next(new ErrorHandler("Lỗi khi tải lên ảnh!", 500));
-      }
-
-      doctor.docAvatar = {
-        public_id: cloudinaryResponse.public_id,
-        url: cloudinaryResponse.secure_url,
-      };
-    }
-
-    await doctor.save();
-
+    const doctor = await doctorManager.updateDoctor(id, req.body, req.files);
     res.status(200).json({
       success: true,
       message: "Cập nhật bác sĩ thành công!",
       doctor,
     });
   } catch (error) {
-    console.error("Lỗi khi cập nhật bác sĩ:", error);
-    next(new ErrorHandler("Có lỗi xảy ra khi cập nhật bác sĩ.", 500));
+    return next(new ErrorHandler(error.message, 400));
   }
 });
+
 export const updatePatientProfile = catchAsyncErrors(async (req, res, next) => {
   try {
     const userId = req.user._id; 
