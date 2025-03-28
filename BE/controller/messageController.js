@@ -7,7 +7,6 @@ import {
   ConfirmationMessageFactory,
 } from "../factories/messageFactory.js";
 
-
 // Hàm tiện ích để lấy factory dựa trên loại tin nhắn
 const getMessageFactory = (messageType = "regular") => {
   switch (messageType.toLowerCase()) {
@@ -23,51 +22,32 @@ const getMessageFactory = (messageType = "regular") => {
 };
 
 export const sendMessage = catchAsyncErrors(async (req, res, next) => {
-  const { firstName, lastName, email, phone, message, messageType, cloneFromId } = req.body;
+  const { firstName, lastName, email, phone, message, messageType } = req.body;
 
-  let messagePrototype;
-
-  // Nếu có cloneFromId, sao chép từ tin nhắn có sẵn
-  if (cloneFromId) {
-    try {
-      messagePrototype = await MessagePrototype.cloneFromMessageId(cloneFromId);
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  } else {
-    messagePrototype = new MessagePrototype({ firstName, lastName, email, phone, message, type: messageType });
+  // Kiểm tra dữ liệu đầu vào
+  if (!firstName || !lastName || !email || !phone || !message) {
+    return next(new ErrorHandler("Xin vui lòng điền đầy đủ thông tin!", 400));
   }
 
-  // Lấy factory theo loại tin nhắn
-  const factory = getMessageFactory(messagePrototype.type);
-  const messageObj = factory.createMessage(messagePrototype.getMessageData());
+  // Sử dụng factory để tạo tin nhắn
+  const factory = getMessageFactory(messageType); // Lấy factory dựa trên messageType
+  const messageData = { firstName, lastName, email, phone, message };
+  const messageObj = factory.createMessage(messageData);
+  const messageToSave = messageObj.getMessageData();
 
   // Lưu tin nhắn vào database
-  await Message.create(messageObj.getMessageData());
+  await Message.create(messageToSave);
+
+  // Xử lý bổ sung (nếu cần)
+  const processResult = messageObj.process();
 
   res.status(200).json({
     success: true,
     message: "Tin nhắn đã được gửi thành công!",
+    details: processResult, // Có thể bỏ nếu không cần
   });
 });
 
-//Prototype pattern
-export const findMessageByEmail = async (req, res) => {
-  try {
-    const { email } = req.query;
-    if (!email) return res.status(400).json({ message: "Thiếu email" });
-
-    const lastMessage = await Message.findOne({ email }).sort({ createdAt: -1 });
-
-    if (!lastMessage) return res.status(404).json({ message: "Không tìm thấy tin nhắn" });
-
-    res.json(lastMessage);
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server" });
-  }
-};
-
-//
 export const getAllMessages = catchAsyncErrors(async (req, res, next) => {
   const messages = await Message.find();
   res.status(200).json({

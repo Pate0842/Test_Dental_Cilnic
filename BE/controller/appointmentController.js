@@ -1,5 +1,10 @@
 import AppointmentStrategyFactory from "../strategies/appointment/appointmentStrategyFactory.js";
 import AppointmentContext from "../strategies/appointment/appointmentContext.js";
+import PostAppointmentStrategy from "../strategies/appointment/postAppointmentStrategy.js";
+import GetAllAppointmentsStrategy from "../strategies/appointment/getAllAppointmentsStrategy.js";
+import GetAppointmentByIdStrategy from "../strategies/appointment/getAppointmentByIdStrategy.js";
+import DeleteAppointmentStrategy from "../strategies/appointment/deleteAppointmentStrategy.js";
+import GetUserAppointmentStrategy from "../strategies/appointment/getUserAppointmentStrategy.js";
 import UpdateAppointmentStatusCommand from "../service/UpdateAppointmentStatusCommand.js";
 import CommandInvoker from "../service/CommandInvoker.js";
 

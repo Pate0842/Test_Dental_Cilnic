@@ -2,10 +2,8 @@ import AppointmentStrategy from "./appointmentStrategy.js";
 import ErrorHandler from "../../middlewares/errorMiddlewares.js";
 import { Appointment } from "../../models/appointmentSchema.js";
 import { User } from "../../models/userSchema.js";
-import AppointmentBuilder from "../../builder/appointmentBuilder.js";
 
 class PostAppointmentStrategy extends AppointmentStrategy {
-
   async execute(req, res, next) {
     const {
       firstName, lastName, email, phone, cccd, dob, gender,
@@ -32,16 +30,14 @@ class PostAppointmentStrategy extends AppointmentStrategy {
 
     const patientId = req.user._id;
 
-    // Sử dụng Builder Pattern để tạo đối tượng Appointment
-    const appointmentData = new AppointmentBuilder()
-      .setPatientInfo(firstName, lastName, email, phone, cccd, dob, gender, address)
-      .setDoctorInfo(doctor._id, department, doctor_firstName, doctor_lastName)
-      .setAppointmentDate(appointment_date)
-      .setPatientId(patientId)
-      .setHasVisited(hasVisited)
-      .build();
-
-    const appointment = await Appointment.create(appointmentData);
+    const appointment = await Appointment.create({
+      firstName, lastName, email, phone, cccd, dob, gender,
+      appointment_date, department, doctor: {
+        lastName: doctor_lastName,
+        firstName: doctor_firstName,
+      },
+      hasVisited, address, doctorId: doctor._id, patientId
+    });
 
     res.status(200).json({
       success: true,
