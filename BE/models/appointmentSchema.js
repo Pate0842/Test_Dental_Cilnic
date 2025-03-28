@@ -177,9 +177,9 @@ const appointmentSchema = new mongoose.Schema({
   },
   isProcessed: {
     type: Boolean,
-    default: false, 
+    default: false,
   },
-  
+
 });
 
 export const Appointment = mongoose.model("Appointment", appointmentSchema);
