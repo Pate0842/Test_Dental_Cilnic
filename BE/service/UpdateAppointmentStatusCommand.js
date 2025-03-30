@@ -11,7 +11,6 @@ class UpdateAppointmentStatusCommand extends Command {
     this.newStatus = newStatus;
     this.previousStatus = null;
     this.subject = new AppointmentSubject();
-
     this.subject.attach(new EmailObserver());
   }
 
