@@ -81,6 +81,37 @@ export const getAllMedicalRecords = async (req, res) => {
   }
 };
 
+export const getMedicalRecordsByPatientId = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    const medicalRecords = await MedicalRecord.find({ patientId }).populate([
+      { path: "patientId", select: "name email" },
+      { path: "appointmentId", select: "date isProcessed" },
+      { path: "doctor.doctorId", select: "name department" },
+      { path: "services.serviceId", select: "name price" },
+    ]);
+
+    if (!medicalRecords || medicalRecords.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy hồ sơ bệnh án nào cho bệnh nhân này!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      records: medicalRecords,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Không thể lấy danh sách hồ sơ bệnh án.",
+      error: error.message,
+    });
+  }
+};
+
 export const getDetailMedicalRecordById = async (req, res) => {
   try {
     const { id } = req.params;

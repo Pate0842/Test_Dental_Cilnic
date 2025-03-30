@@ -9,9 +9,7 @@ class EmailObserver {
 
   async update(appointment) {
     try {
-      console.log("EmailObserver received appointment:", appointment);
       if (!appointment || !appointment.email) {
-        console.log(`No valid email found for appointment ${appointment?._id || "unknown"}`);
         return;
       }
 

@@ -25,4 +25,4 @@ class AppointmentSubject {
     }
   }
   
-  export default AppointmentSubject;
+export default AppointmentSubject;

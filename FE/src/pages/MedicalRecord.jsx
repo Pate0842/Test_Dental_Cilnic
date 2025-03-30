@@ -19,7 +19,7 @@ const MedicalRecordStatus = () => {
   // Fetch hồ sơ bệnh án liên quan đến patientId
   const fetchMedicalRecords = async (patientId) => {
     try {
-      const res = await axios.get(`http://localhost:4000/api/v1/medicalRecord/get/${patientId}`, {
+      const res = await axios.get(`http://localhost:4000/api/v1/medical-record/get/${patientId}`, {
         withCredentials: true,
       });
 
