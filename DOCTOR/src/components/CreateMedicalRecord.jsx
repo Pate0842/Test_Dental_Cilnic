@@ -149,7 +149,7 @@ const CreateMedicalRecord = () => {
   };
 
   return (
-    <section className="page">
+    <section className="page create-medical-record">
       <section className="container add-doctor-form">
         <h1 className="form-title">TẠO HỒ SƠ BỆNH ÁN</h1>
         {appointment ? (
@@ -224,7 +224,7 @@ const CreateMedicalRecord = () => {
                 </table>
                 <button type="button" onClick={addPrescription}>Thêm thuốc</button>
               </div>
-
+  
               <div className="services">
                 <h3>Dịch vụ</h3>
                 <table>

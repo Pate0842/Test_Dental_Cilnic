@@ -698,3 +698,121 @@ td {
     font-size: 18px;
   }
 }
+
+.create-medical-record .add-doctor-form {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.create-medical-record .input-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.create-medical-record .input-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 7px;
+}
+
+.create-medical-record textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 7px;
+  margin: 20px 0;
+}
+
+.create-medical-record input[type="date"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 7px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat right 10px center;
+  background-size: 20px;
+}
+
+.create-medical-record .prescriptions table,
+.create-medical-record .services table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.create-medical-record th,
+.create-medical-record td {
+  padding: 12px;
+  text-align: left;
+}
+
+.create-medical-record th {
+  background: #f0f0f0;
+  font-weight: 600;
+  color: #555;
+}
+
+.create-medical-record td input,
+.create-medical-record td select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.create-medical-record .prescriptions td:nth-child(2) input[type="number"] {
+  width: 80px;
+}
+
+.create-medical-record .prescriptions td:nth-child(3) input {
+  width: 100px;
+}
+
+.create-medical-record .services td:nth-child(1) select {
+  min-width: 200px;
+}
+
+.create-medical-record .services td:nth-child(2) input {
+  min-width: 150px;
+}
+
+.create-medical-record td button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.create-medical-record .prescriptions button[type="button"],
+.create-medical-record .services button[type="button"] {
+  margin-top: 30px;
+  padding: 10px 20px;
+  background: #2ecc71;
+}
+
+.create-medical-record .prescriptions button[type="button"]:hover,
+.create-medical-record .services button[type="button"]:hover {
+  background: #27ae60;
+}
+
+.create-medical-record .submit-btn {
+  margin-top: 20px;
+  padding: 12px 40px;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .create-medical-record .input-group {
+    grid-template-columns: 1fr;
+  }
+
+  .create-medical-record .prescriptions td:nth-child(2) input[type="number"],
+  .create-medical-record .prescriptions td:nth-child(3) input,
+  .create-medical-record .services td:nth-child(1) select,
+  .create-medical-record .services td:nth-child(2) input {
+    width: 100%;
+  }
+}
