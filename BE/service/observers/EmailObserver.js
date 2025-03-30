@@ -1,24 +1,26 @@
-import sendEmail from '../../utils/sendEmail.js';
+import { EmailVisitor } from "./NotificationVisitor.js";
 
 class EmailObserver {
+  constructor() {
+    this.visitors = [
+      new EmailVisitor(),
+    ];
+  }
+
   async update(appointment) {
     try {
-      console.log('EmailObserver received appointment:', appointment);
+      console.log("EmailObserver received appointment:", appointment);
       if (!appointment || !appointment.email) {
-        console.log(`No valid email found for appointment ${appointment?._id || 'unknown'}`);
+        console.log(`No valid email found for appointment ${appointment?._id || "unknown"}`);
         return;
       }
 
-      const emailOptions = {
-        email: appointment.email,
-        subject: 'Cập nhật trạng thái lịch hẹn',
-        message: `Lịch hẹn của bạn đã được cập nhật thành: ${appointment.status}`,
-      };
-
-      await sendEmail(emailOptions);
-      console.log(`Email sent to ${appointment.email} about status: ${appointment.status}`);
+      // Duyệt qua danh sách visitor và thực hiện thông báo
+      for (const visitor of this.visitors) {
+        await visitor.visitEmailObserver(this, appointment);
+      }
     } catch (error) {
-      console.error(`Failed to send email for appointment ${appointment?._id || 'unknown'}:`, error.message);
+      console.error(`Failed to process appointment ${appointment?._id || "unknown"}:`, error.message);
     }
   }
 }

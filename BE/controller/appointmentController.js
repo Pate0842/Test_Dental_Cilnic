@@ -38,10 +38,7 @@ export const updateAppointmentStatus = async (req, res, next) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  // Tạo một Command để cập nhật trạng thái lịch hẹn
   const command = new UpdateAppointmentStatusCommand(id, status);
-
-  // Thực thi command qua CommandInvoker
   await CommandInvoker.executeCommand(command, req, res, next);
 };
 

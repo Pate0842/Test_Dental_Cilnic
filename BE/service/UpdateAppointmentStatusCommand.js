@@ -34,7 +34,7 @@ class UpdateAppointmentStatusCommand extends Command {
         return next(new ErrorHandler("Không thể cập nhật lịch hẹn!", 500));
       }
 
-      console.log('Updated Appointment:', updatedAppointment); // Debug log
+      console.log("Updated Appointment:", updatedAppointment);
       await this.subject.setAppointment(updatedAppointment);
 
       res.status(200).json({
@@ -63,7 +63,7 @@ class UpdateAppointmentStatusCommand extends Command {
         return next(new ErrorHandler("Không thể hoàn tác lịch hẹn!", 500));
       }
 
-      console.log('Reverted Appointment:', revertedAppointment); // Debug log
+      console.log("Reverted Appointment:", revertedAppointment);
       await this.subject.setAppointment(revertedAppointment);
 
       res.status(200).json({
