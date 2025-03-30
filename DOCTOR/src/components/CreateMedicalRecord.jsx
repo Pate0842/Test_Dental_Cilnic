@@ -64,7 +64,7 @@ const CreateMedicalRecord = () => {
         toast.error("Không thể tải danh sách dịch vụ.");
       }
     };
-
+  
     fetchServices();
   }, []);
 
@@ -75,24 +75,29 @@ const CreateMedicalRecord = () => {
       appointmentId: appointment._id,
       examinationDate: e.target.examinationDate.value,
       diagnosis: e.target.diagnosis.value,
-      prescriptions: prescriptions.map((prescription) => ({
-        medicineName: prescription.name,
-        dosage: prescription.quantity,
-        unit: prescription.unit,
-        usage: prescription.usage,
-      })),
-      services: selectedServices.map((service) => ({
-        serviceId: service.serviceId,
-        notes: service.notes,
-      })),
+      prescriptions: prescriptions
+        .filter((p) => p.name.trim() !== "")
+        .map((prescription) => ({
+          medicineName: prescription.name,
+          dosage: Number(prescription.quantity),
+          unit: prescription.unit,
+          usage: prescription.usage,
+        })),
+      services: selectedServices
+        .filter((s) => s.serviceId.trim() !== "" && /^[0-9a-fA-F]{24}$/.test(s.serviceId)) // Validate ObjectId
+        .map((service) => ({
+          serviceId: service.serviceId,
+          notes: service.notes,
+        })),
     };
-
+    console.log("Payload being sent:", JSON.stringify(medicalRecord, null, 2));
+  
     try {
-      const response = await axios.post("http://localhost:4000/api/v1/medicalRecord/post", medicalRecord, {
+      const response = await axios.post("http://localhost:4000/api/v1/medical-record/post", medicalRecord, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
-
+  
       if (response.data.success) {
         toast.success("Hồ sơ bệnh án đã được tạo thành công!");
         if (setAppointments) {
@@ -103,7 +108,8 @@ const CreateMedicalRecord = () => {
         navigate("/");
       }
     } catch (error) {
-      toast.error("Đã có lỗi khi tạo hồ sơ bệnh án.");
+      console.error("Error details:", error.response?.data);
+      toast.error(error.response?.data?.message || "Đã có lỗi khi tạo hồ sơ bệnh án.");
     }
   };
 
@@ -241,7 +247,10 @@ const CreateMedicalRecord = () => {
                         <td>
                           <select
                             value={service.serviceId}
-                            onChange={(e) => handleServiceChange(index, "serviceId", e.target.value)}
+                            onChange={(e) => {
+                              console.log("Selected service ID:", e.target.value);
+                              handleServiceChange(index, "serviceId", e.target.value);
+                            }}
                             required
                           >
                             <option value="">Chọn dịch vụ</option>
