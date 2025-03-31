@@ -22,17 +22,15 @@ export const postAppointment = (req, res, next) => {
   }
 };
 
-export const getAllAppointments = (req, res, next) => {
-  const strategy = AppointmentStrategyFactory.getStrategy("GetAllAppointments");
-  AppointmentContext.setStrategy(strategy);
-  AppointmentContext.executeStrategy(req, res, next);
-};
-
-export const getAppointmentById = (req, res, next) => {
-  const strategy = AppointmentStrategyFactory.getStrategy("GetAppointmentById");
-  AppointmentContext.setStrategy(strategy);
-  AppointmentContext.executeStrategy(req, res, next);
-};
+export const getAllAppointments = (req, res, next) => { 
+  AppointmentContext.setStrategy(GetAllAppointmentsStrategy); 
+  AppointmentContext.executeStrategy(req, res, next); 
+}; 
+ 
+export const getAppointmentById = (req, res, next) => { 
+  AppointmentContext.setStrategy(GetAppointmentByIdStrategy); 
+  AppointmentContext.executeStrategy(req, res, next); 
+}; 
 
 export const updateAppointmentStatus = async (req, res, next) => {
   const { id } = req.params;
@@ -56,4 +54,4 @@ export const getUserAppointments = (req, res, next) => {
   const strategy = AppointmentStrategyFactory.getStrategy("GetUserAppointment");
   AppointmentContext.setStrategy(strategy);
   AppointmentContext.executeStrategy(req, res, next);
-};
+};  
